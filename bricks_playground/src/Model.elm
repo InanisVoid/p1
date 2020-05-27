@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Model exposing (Model, Ball, Brick, Bat,recCollisionTest,recInit,halfWidth,halfHeight,canvasHeight,canvasWidth,ballRecUpdate,batRecUpdate,ballConfig,batConfig,total,brickConfig,brickRecUpdate)
 
 type alias Rec =
     { cx : Float

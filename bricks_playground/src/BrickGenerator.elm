@@ -1,5 +1,5 @@
-module BrickGenerator exposing (..)
-import Model exposing (..)
+module BrickGenerator exposing (genearateOneBrick,generateBricks)
+import Model exposing ( Brick, recInit,canvasWidth,brickConfig,brickRecUpdate)
 
 genearateOneBrick : Float -> Float -> Brick
 genearateOneBrick x y =
@@ -26,4 +26,4 @@ generateBricks bricklist number x y =
         if number == 0 then
             bricklist
         else
-            generateBricks ( (genearateOneBrick x y) :: bricklist ) (number - 1) (nextx x) (ytemp) 
+            generateBricks ( genearateOneBrick x y :: bricklist ) (number - 1) (nextx x) ytemp
