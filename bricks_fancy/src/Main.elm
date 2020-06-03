@@ -30,7 +30,7 @@ subscriptions model =
         -- tell=Debug.log "p1,p2" ((not p1.lose) && (not p2.lose))
     in
     Sub.batch
-        [ if (not p1.lose) && (not p2.lose) then
+        [ if (not p1.lose) || (p1.lose) then
             onAnimationFrameDelta Tick
 
           else

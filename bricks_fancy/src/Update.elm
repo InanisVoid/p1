@@ -1,6 +1,6 @@
 module Update exposing (update)
 import Messages exposing (Msg(..))
-import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate)
+import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate,brickConfig,generateBricks)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -79,8 +79,10 @@ animate  model =
            (model, Cmd.none)
         else
             let 
-                newPlayer1 = checkLose <| updateBricks <| updateBall <| updateBat  player1
-                newPlayer2 = checkLose <| updateBricks <| updateBall <| updateBat  player2
+                (nPlayer1Temp1, nPlayer2Temp1) = updateBricks player2 <| updateBall <| updateBat  player1
+                (nPlayer2Temp2, nPlayer1Temp2) = updateBricks nPlayer1Temp1 <| updateBall <| updateBat  nPlayer2Temp1
+                newPlayer1 = checkLose nPlayer1Temp2
+                newPlayer2 = checkLose nPlayer2Temp2
             in
                 ( {model| player1 = newPlayer1, player2 = newPlayer2}, Cmd.none)
 
@@ -160,41 +162,55 @@ batCollision bat ball=
         {ball |  ySpeed=newYSpeed }
 
 --Brick
-updateBricks : Player -> Player
-updateBricks model =
+updateBricks : Player -> Player -> (Player,Player)
+updateBricks otherPlayer me =
     let 
         changeSpeed flagship system =
             if flagship then
                {system | ySpeed=-system.ySpeed}
             else
                 system
-        flag=allBricksCollision model.ball model.bricks
-        newball = changeSpeed flag model.ball
-        newbricks = generateNewBricks flag model.ball model.bricks
+
+        (flag, filteredY)=allBricksCollision me.ball me.bricks
+        newball = changeSpeed flag me.ball
+        newBricks = generateNewBricks flag me.ball me.bricks
+        
+        getNewOtherPlayer =
+            if (flag && (clearLines newBricks filteredY)) then
+                addOneLineBricks otherPlayer
+            else
+                otherPlayer
     in
-        { model 
-        | ball= newball
-        , bricks=newbricks
-        }
+        ({me| ball= newball, bricks=newBricks}, getNewOtherPlayer )
 
 oneBricksCollision : Ball -> Brick -> Brick 
 oneBricksCollision ball onebrick =
     {onebrick | collision = recCollisionTest onebrick.edge ball.edge}
 
 
-allBricksCollision : Ball -> List Brick -> Bool
+allBricksCollision : Ball -> List Brick -> (Bool,Float)
 allBricksCollision ball bricks=
     let
         bricksTemp = List.map (oneBricksCollision ball)  bricks
         filterFunction model =
             model.collision
+        
         filterBricks=List.filter filterFunction bricksTemp
         length= List.length filterBricks
+        headBrick=List.head filterBricks
+        
+        getY =  
+            case headBrick of 
+                Just b ->
+                    b.y
+                Nothing -> 
+                    0
+         
     in
         if length >0 then
-            True
+            (True,getY)
         else
-            False
+            (False,0)
 
 
 generateNewBricks : Bool -> Ball -> List Brick -> List Brick
@@ -209,3 +225,34 @@ generateNewBricks flag ball bricks =
         else
             bricks
 
+clearLines : List Brick -> Float -> Bool
+clearLines model filteredY =
+    let 
+        getYList bricksTemp =
+            bricksTemp.y
+        yList = List.map getYList model
+    in
+        List.member filteredY yList
+
+addOneLineBricks : Player -> Player
+addOneLineBricks onePlayer =
+    let 
+        brickList = onePlayer.bricks
+        newBricks = addNewBricks <| updateOriginalBricks brickList
+    in
+        {onePlayer | bricks =  newBricks } 
+
+updateOriginalBricks : List Brick -> List Brick
+updateOriginalBricks model =
+    let 
+        adding brickTemp = 
+            {brickTemp | y = brickTemp.y + brickConfig.height}
+    in
+        List.map adding model
+
+addNewBricks : List Brick -> List Brick
+addNewBricks model =
+    let 
+        number = 10
+    in
+        generateBricks model number brickConfig.x brickConfig.y

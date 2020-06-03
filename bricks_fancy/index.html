@@ -5190,7 +5190,7 @@ var $author$project$Model$Bat = F6(
 	function (x, y, width, height, edge, xSpeed) {
 		return {edge: edge, height: height, width: width, x: x, xSpeed: xSpeed, y: y};
 	});
-var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 20 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
+var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 1000 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
 var $author$project$Model$batRecUpdate = function (model) {
 	var halfy = model.height / 2;
 	var newy = model.y + halfy;
@@ -5295,7 +5295,6 @@ var $author$project$Main$key = F2(
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$html$Html$Events$keyCode = A2($elm$json$Json$Decode$field, 'keyCode', $elm$json$Json$Decode$int);
-var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$core$Basics$not = _Basics_not;
 var $elm$browser$Browser$AnimationManager$Delta = function (a) {
@@ -5835,11 +5834,10 @@ var $elm$browser$Browser$Events$onKeyUp = A2($elm$browser$Browser$Events$on, $el
 var $author$project$Main$subscriptions = function (model) {
 	var p2 = model.player2;
 	var p1 = model.player1;
-	var tell = A2($elm$core$Debug$log, 'p1,p2', (!p1.lose) && (!p2.lose));
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				((!p1.lose) && (!p2.lose)) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
+				((!p1.lose) || p1.lose) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
 				$elm$browser$Browser$Events$onKeyUp(
 				A2(
 					$elm$json$Json$Decode$map,
@@ -5925,6 +5923,26 @@ var $author$project$Update$updateBat = function (model) {
 			bat: A2($author$project$Update$generateNewBat, model.direction, model.bat)
 		});
 };
+var $author$project$Update$addNewBricks = function (model) {
+	var number = 10;
+	return A4($author$project$Model$generateBricks, model, number, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
+};
+var $author$project$Update$updateOriginalBricks = function (model) {
+	var adding = function (brickTemp) {
+		return _Utils_update(
+			brickTemp,
+			{y: brickTemp.y + $author$project$Model$brickConfig.height});
+	};
+	return A2($elm$core$List$map, adding, model);
+};
+var $author$project$Update$addOneLineBricks = function (onePlayer) {
+	var brickList = onePlayer.bricks;
+	var newBricks = $author$project$Update$addNewBricks(
+		$author$project$Update$updateOriginalBricks(brickList));
+	return _Utils_update(
+		onePlayer,
+		{bricks: newBricks});
+};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5936,6 +5954,15 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $author$project$Update$oneBricksCollision = F2(
 	function (ball, onebrick) {
 		return _Utils_update(
@@ -5954,8 +5981,55 @@ var $author$project$Update$allBricksCollision = F2(
 			$author$project$Update$oneBricksCollision(ball),
 			bricks);
 		var filterBricks = A2($elm$core$List$filter, filterFunction, bricksTemp);
+		var headBrick = $elm$core$List$head(filterBricks);
+		var getY = function () {
+			if (headBrick.$ === 'Just') {
+				var b = headBrick.a;
+				return b.y;
+			} else {
+				return 0;
+			}
+		}();
 		var length = $elm$core$List$length(filterBricks);
-		return (length > 0) ? true : false;
+		return (length > 0) ? _Utils_Tuple2(true, getY) : _Utils_Tuple2(false, 0);
+	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $author$project$Update$clearLines = F2(
+	function (model, filteredY) {
+		var getYList = function (bricksTemp) {
+			return bricksTemp.y;
+		};
+		var yList = A2($elm$core$List$map, getYList, model);
+		return A2($elm$core$List$member, filteredY, yList);
 	});
 var $author$project$Update$generateNewBricks = F3(
 	function (flag, ball, bricks) {
@@ -5968,34 +6042,48 @@ var $author$project$Update$generateNewBricks = F3(
 			bricks);
 		return flag ? A2($elm$core$List$filter, filterFunction, bricksTemp) : bricks;
 	});
-var $author$project$Update$updateBricks = function (model) {
-	var flag = A2($author$project$Update$allBricksCollision, model.ball, model.bricks);
-	var newbricks = A3($author$project$Update$generateNewBricks, flag, model.ball, model.bricks);
-	var changeSpeed = F2(
-		function (flagship, system) {
-			return flagship ? _Utils_update(
-				system,
-				{ySpeed: -system.ySpeed}) : system;
-		});
-	var newball = A2(changeSpeed, flag, model.ball);
-	return _Utils_update(
-		model,
-		{ball: newball, bricks: newbricks});
-};
+var $author$project$Update$updateBricks = F2(
+	function (otherPlayer, me) {
+		var changeSpeed = F2(
+			function (flagship, system) {
+				return flagship ? _Utils_update(
+					system,
+					{ySpeed: -system.ySpeed}) : system;
+			});
+		var _v0 = A2($author$project$Update$allBricksCollision, me.ball, me.bricks);
+		var flag = _v0.a;
+		var filteredY = _v0.b;
+		var newBricks = A3($author$project$Update$generateNewBricks, flag, me.ball, me.bricks);
+		var getNewOtherPlayer = (flag && A2($author$project$Update$clearLines, newBricks, filteredY)) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
+		var newball = A2(changeSpeed, flag, me.ball);
+		return _Utils_Tuple2(
+			_Utils_update(
+				me,
+				{ball: newball, bricks: newBricks}),
+			getNewOtherPlayer);
+	});
 var $author$project$Update$animate = function (model) {
 	var player2 = model.player2;
 	var player1 = model.player1;
 	if (player1.lose) {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	} else {
-		var newPlayer2 = $author$project$Update$checkLose(
-			$author$project$Update$updateBricks(
-				$author$project$Update$updateBall(
-					$author$project$Update$updateBat(player2))));
-		var newPlayer1 = $author$project$Update$checkLose(
-			$author$project$Update$updateBricks(
-				$author$project$Update$updateBall(
-					$author$project$Update$updateBat(player1))));
+		var _v0 = A2(
+			$author$project$Update$updateBricks,
+			player2,
+			$author$project$Update$updateBall(
+				$author$project$Update$updateBat(player1)));
+		var nPlayer1Temp1 = _v0.a;
+		var nPlayer2Temp1 = _v0.b;
+		var _v1 = A2(
+			$author$project$Update$updateBricks,
+			nPlayer1Temp1,
+			$author$project$Update$updateBall(
+				$author$project$Update$updateBat(nPlayer2Temp1)));
+		var nPlayer2Temp2 = _v1.a;
+		var nPlayer1Temp2 = _v1.b;
+		var newPlayer1 = $author$project$Update$checkLose(nPlayer1Temp2);
+		var newPlayer2 = $author$project$Update$checkLose(nPlayer2Temp2);
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
