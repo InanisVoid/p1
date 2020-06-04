@@ -176,7 +176,7 @@ updateBricks otherPlayer me =
         newBricks = generateNewBricks flag me.ball me.bricks
         
         getNewOtherPlayer =
-            if (flag && (clearLines newBricks filteredY)) then
+            if (flag && not (clearLines newBricks filteredY)) then
                 addOneLineBricks otherPlayer
             else
                 otherPlayer

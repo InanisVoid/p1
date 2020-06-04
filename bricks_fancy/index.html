@@ -6054,7 +6054,7 @@ var $author$project$Update$updateBricks = F2(
 		var flag = _v0.a;
 		var filteredY = _v0.b;
 		var newBricks = A3($author$project$Update$generateNewBricks, flag, me.ball, me.bricks);
-		var getNewOtherPlayer = (flag && A2($author$project$Update$clearLines, newBricks, filteredY)) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
+		var getNewOtherPlayer = (flag && (!A2($author$project$Update$clearLines, newBricks, filteredY))) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
 		var newball = A2(changeSpeed, flag, me.ball);
 		return _Utils_Tuple2(
 			_Utils_update(
