@@ -5861,6 +5861,9 @@ var $author$project$Update$checkLose = function (model) {
 			lose: checkball(model.ball)
 		});
 };
+var $author$project$Model$Horizon = {$: 'Horizon'};
+var $author$project$Model$Nocollision = {$: 'Nocollision'};
+var $author$project$Model$Vertical = {$: 'Vertical'};
 var $elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
 };
@@ -5868,20 +5871,42 @@ var $author$project$Model$recCollisionTest = F2(
 	function (rec1, rec2) {
 		return ((_Utils_cmp(
 			$elm$core$Basics$abs(rec1.cx - rec2.cx),
+			rec1.halfWidth + rec2.halfWidth) < 0) && ((_Utils_cmp(
+			$elm$core$Basics$abs(rec1.cy - rec2.cy),
+			rec1.halfHeight + rec2.halfHeight) < 0) && (_Utils_cmp(
+			$elm$core$Basics$abs(rec1.cx - rec2.cx) - rec1.halfWidth,
+			$elm$core$Basics$abs(rec1.cy - rec2.cy) - rec1.halfHeight) > -1))) ? $author$project$Model$Horizon : (((_Utils_cmp(
+			$elm$core$Basics$abs(rec1.cx - rec2.cx),
 			rec1.halfWidth + rec2.halfWidth) < 0) && (_Utils_cmp(
 			$elm$core$Basics$abs(rec1.cy - rec2.cy),
-			rec1.halfHeight + rec2.halfHeight) < 0)) ? true : false;
+			rec1.halfHeight + rec2.halfHeight) < 0)) ? $author$project$Model$Vertical : $author$project$Model$Nocollision);
 	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
 var $author$project$Update$batCollision = F2(
 	function (bat, ball) {
 		var changeSpeed = F3(
 			function (speed, rec1, rec2) {
-				return A2($author$project$Model$recCollisionTest, rec1, rec2) ? (-speed) : speed;
+				var _v0 = A2($author$project$Model$recCollisionTest, rec1, rec2);
+				switch (_v0.$) {
+					case 'Horizon':
+						return _Utils_Tuple2(speed.a, -speed.b);
+					case 'Vertical':
+						return _Utils_Tuple2(speed.a, -speed.b);
+					default:
+						return speed;
+				}
 			});
-		var newYSpeed = A3(changeSpeed, ball.ySpeed, bat.edge, ball.edge);
+		var newSpeed = A3(
+			changeSpeed,
+			_Utils_Tuple2(ball.xSpeed, ball.ySpeed),
+			bat.edge,
+			ball.edge);
 		return _Utils_update(
 			ball,
-			{ySpeed: newYSpeed});
+			{xSpeed: newSpeed.a, ySpeed: newSpeed.b});
 	});
 var $author$project$Update$generateNewBall = function (model) {
 	var yNew = model.y + model.ySpeed;
@@ -5928,12 +5953,18 @@ var $author$project$Update$addNewBricks = function (model) {
 	return A4($author$project$Model$generateBricks, model, number, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
 };
 var $author$project$Update$updateOriginalBricks = function (model) {
-	var adding = function (brickTemp) {
-		return _Utils_update(
-			brickTemp,
-			{y: brickTemp.y + $author$project$Model$brickConfig.height});
+	var updatingEdge = function (brickTemp2) {
+		return $author$project$Model$brickRecUpdate(brickTemp2);
 	};
-	return A2($elm$core$List$map, adding, model);
+	var adding = function (brickTemp1) {
+		return _Utils_update(
+			brickTemp1,
+			{y: brickTemp1.y + $author$project$Model$brickConfig.height});
+	};
+	return A2(
+		$elm$core$List$map,
+		updatingEdge,
+		A2($elm$core$List$map, adding, model));
 };
 var $author$project$Update$addOneLineBricks = function (onePlayer) {
 	var brickList = onePlayer.bricks;
@@ -5963,18 +5994,23 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
+var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Update$oneBricksCollision = F2(
 	function (ball, onebrick) {
-		return _Utils_update(
-			onebrick,
-			{
-				collision: A2($author$project$Model$recCollisionTest, onebrick.edge, ball.edge)
-			});
+		return _Utils_Tuple2(
+			_Utils_update(
+				onebrick,
+				{
+					collision: !_Utils_eq(
+						A2($author$project$Model$recCollisionTest, onebrick.edge, ball.edge),
+						$author$project$Model$Nocollision)
+				}),
+			A2($author$project$Model$recCollisionTest, onebrick.edge, ball.edge));
 	});
 var $author$project$Update$allBricksCollision = F2(
 	function (ball, bricks) {
 		var filterFunction = function (model) {
-			return model.collision;
+			return model.a.collision;
 		};
 		var bricksTemp = A2(
 			$elm$core$List$map,
@@ -5982,16 +6018,24 @@ var $author$project$Update$allBricksCollision = F2(
 			bricks);
 		var filterBricks = A2($elm$core$List$filter, filterFunction, bricksTemp);
 		var headBrick = $elm$core$List$head(filterBricks);
+		var getCollision = function () {
+			if (headBrick.$ === 'Just') {
+				var b = headBrick.a;
+				return b.b;
+			} else {
+				return $author$project$Model$Nocollision;
+			}
+		}();
 		var getY = function () {
 			if (headBrick.$ === 'Just') {
 				var b = headBrick.a;
-				return b.y;
+				return b.a.y;
 			} else {
 				return 0;
 			}
 		}();
 		var length = $elm$core$List$length(filterBricks);
-		return (length > 0) ? _Utils_Tuple2(true, getY) : _Utils_Tuple2(false, 0);
+		return _Utils_Tuple2(getCollision, getY);
 	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -6031,30 +6075,63 @@ var $author$project$Update$clearLines = F2(
 		var yList = A2($elm$core$List$map, getYList, model);
 		return A2($elm$core$List$member, filteredY, yList);
 	});
+var $elm$core$List$unzip = function (pairs) {
+	var step = F2(
+		function (_v0, _v1) {
+			var x = _v0.a;
+			var y = _v0.b;
+			var xs = _v1.a;
+			var ys = _v1.b;
+			return _Utils_Tuple2(
+				A2($elm$core$List$cons, x, xs),
+				A2($elm$core$List$cons, y, ys));
+		});
+	return A3(
+		$elm$core$List$foldr,
+		step,
+		_Utils_Tuple2(_List_Nil, _List_Nil),
+		pairs);
+};
 var $author$project$Update$generateNewBricks = F3(
 	function (flag, ball, bricks) {
 		var filterFunction = function (model) {
 			return !model.collision;
 		};
-		var bricksTemp = A2(
-			$elm$core$List$map,
-			$author$project$Update$oneBricksCollision(ball),
-			bricks);
+		var _v0 = $elm$core$List$unzip(
+			A2(
+				$elm$core$List$map,
+				$author$project$Update$oneBricksCollision(ball),
+				bricks));
+		var bricksTemp = _v0.a;
+		var collision = _v0.b;
 		return flag ? A2($elm$core$List$filter, filterFunction, bricksTemp) : bricks;
 	});
 var $author$project$Update$updateBricks = F2(
 	function (otherPlayer, me) {
 		var changeSpeed = F2(
 			function (flagship, system) {
-				return flagship ? _Utils_update(
-					system,
-					{ySpeed: -system.ySpeed}) : system;
+				switch (flagship.$) {
+					case 'Horizon':
+						return _Utils_update(
+							system,
+							{xSpeed: -system.xSpeed});
+					case 'Vertical':
+						return _Utils_update(
+							system,
+							{ySpeed: -system.ySpeed});
+					default:
+						return system;
+				}
 			});
 		var _v0 = A2($author$project$Update$allBricksCollision, me.ball, me.bricks);
 		var flag = _v0.a;
 		var filteredY = _v0.b;
-		var newBricks = A3($author$project$Update$generateNewBricks, flag, me.ball, me.bricks);
-		var getNewOtherPlayer = (flag && (!A2($author$project$Update$clearLines, newBricks, filteredY))) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
+		var newBricks = A3(
+			$author$project$Update$generateNewBricks,
+			!_Utils_eq(flag, $author$project$Model$Nocollision),
+			me.ball,
+			me.bricks);
+		var getNewOtherPlayer = ((!_Utils_eq(flag, $author$project$Model$Nocollision)) && (!A2($author$project$Update$clearLines, newBricks, filteredY))) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
 		var newball = A2(changeSpeed, flag, me.ball);
 		return _Utils_Tuple2(
 			_Utils_update(
@@ -6164,6 +6241,7 @@ var $author$project$Update$update = F2(
 	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -6296,11 +6374,36 @@ var $author$project$View$playerDemonstrate = function (model) {
 var $author$project$View$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				$author$project$View$playerDemonstrate(model.player1),
-				$author$project$View$playerDemonstrate(model.player2)
+				$elm$svg$Svg$Attributes$id('wrapper')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('div1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$playerDemonstrate(model.player1)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('div2'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'right')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$playerDemonstrate(model.player2)
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

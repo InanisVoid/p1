@@ -6,6 +6,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import String
 import Update exposing (..)
+-- import Debug
 ballInit : Ball
 ballInit = ballRecUpdate ballConfig
 batInit : Bat
@@ -36,13 +37,18 @@ setStyle3 =
 
 view : Model -> Html msg
 view model =
-    div [][playerDemonstrate model.player1,playerDemonstrate model.player2]
+    -- let
+    --    p1=model.player1
+    -- --    d=Debug.log "Bricks" p1.bricks
+    -- in
+        div [id  "wrapper"][div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],div[id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2]]
 
 
 
 playerDemonstrate : Player -> Html msg
 playerDemonstrate model =
     let
+       
         gWidth = "100"
         gHeight = "77"
         screen = rect [fill "#ffffff", x "0", y "0", width gWidth, height gHeight] []

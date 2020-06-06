@@ -6,12 +6,20 @@ type alias Rec =
     , halfHeight : Float
     }
 
-recCollisionTest : Rec -> Rec -> Bool
+type Collisiontype 
+    = Horizon
+    | Vertical
+    | Nocollision
+    
+    
+recCollisionTest : Rec -> Rec -> Collisiontype
 recCollisionTest rec1 rec2 =
-    if (abs(rec1.cx - rec2.cx) < rec1.halfWidth + rec2.halfWidth) && (abs(rec1.cy - rec2.cy) < rec1.halfHeight + rec2.halfHeight) then
-        True
+    if (abs(rec1.cx - rec2.cx) < rec1.halfWidth + rec2.halfWidth) && (abs(rec1.cy - rec2.cy) < rec1.halfHeight + rec2.halfHeight) && (abs(rec1.cx - rec2.cx) - rec1.halfWidth >= abs(rec1.cy - rec2.cy) - rec1.halfHeight) then
+        Horizon
+    else if (abs(rec1.cx - rec2.cx) < rec1.halfWidth + rec2.halfWidth) && (abs(rec1.cy - rec2.cy) < rec1.halfHeight + rec2.halfHeight) then
+        Vertical
     else
-        False
+        Nocollision
 
 recInit : Rec
 recInit = Rec 0 0 0 0
