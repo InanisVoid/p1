@@ -6,6 +6,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import String
 import Update exposing (..)
+
 ballInit : Ball
 ballInit = ballRecUpdate ballConfig
 batInit : Bat
@@ -36,7 +37,7 @@ setStyle3 =
 
 view : Model -> Html msg
 view model =
-    div [][playerDemonstrate model.player1,playerDemonstrate model.player2]
+    div [id  "wrapper"][div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],div[id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2]]
 
 
 

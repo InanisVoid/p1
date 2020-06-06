@@ -153,47 +153,59 @@ batCollision : Bat -> Ball -> Ball
 batCollision bat ball=
     let
         changeSpeed speed rec1 rec2= 
-            if recCollisionTest rec1 rec2 then
-                -speed
-            else
-                speed
-        newYSpeed = changeSpeed ball.ySpeed bat.edge ball.edge
+            case recCollisionTest rec1 rec2 of
+                Model.Horizon -> 
+                    ((Tuple.first speed),-(Tuple.second speed))
+
+                Model.Vertical ->
+                    ((Tuple.first speed),-(Tuple.second speed))
+                
+                Model.Nocollision ->speed
+            
+                
+        newSpeed = changeSpeed (ball.xSpeed,ball.ySpeed) bat.edge ball.edge
     in
-        {ball |  ySpeed=newYSpeed }
+        {ball |  xSpeed=(Tuple.first newSpeed), ySpeed=(Tuple.second newSpeed) }
 
 --Brick
 updateBricks : Player -> Player -> (Player,Player)
 updateBricks otherPlayer me =
     let 
         changeSpeed flagship system =
-            if flagship then
-               {system | ySpeed=-system.ySpeed}
-            else
-                system
+            case flagship of
+                Model.Horizon -> 
+                    {system | xSpeed=-system.xSpeed}
+
+                Model.Vertical ->
+                    {system | ySpeed=-system.ySpeed}
+                
+                Model.Nocollision ->system
+    
+
 
         (flag, filteredY)=allBricksCollision me.ball me.bricks
         newball = changeSpeed flag me.ball
-        newBricks = generateNewBricks flag me.ball me.bricks
+        newBricks = generateNewBricks (flag /= Model.Nocollision) me.ball me.bricks
         
         getNewOtherPlayer =
-            if (flag && (clearLines newBricks filteredY)) then
+            if ((flag /= Model.Nocollision) && not (clearLines newBricks filteredY)) then
                 addOneLineBricks otherPlayer
             else
                 otherPlayer
     in
         ({me| ball= newball, bricks=newBricks}, getNewOtherPlayer )
 
-oneBricksCollision : Ball -> Brick -> Brick 
+oneBricksCollision : Ball -> Brick -> (Brick,Model.Collisiontype) 
 oneBricksCollision ball onebrick =
-    {onebrick | collision = recCollisionTest onebrick.edge ball.edge}
+    ({onebrick | collision = ((recCollisionTest onebrick.edge ball.edge) /= Model.Nocollision)},recCollisionTest onebrick.edge ball.edge)
 
 
-allBricksCollision : Ball -> List Brick -> (Bool,Float)
+allBricksCollision : Ball -> List Brick -> (Model.Collisiontype,Float)
 allBricksCollision ball bricks=
     let
         bricksTemp = List.map (oneBricksCollision ball)  bricks
         filterFunction model =
-            model.collision
+            (Tuple.first model).collision
         
         filterBricks=List.filter filterFunction bricksTemp
         length= List.length filterBricks
@@ -202,21 +214,23 @@ allBricksCollision ball bricks=
         getY =  
             case headBrick of 
                 Just b ->
-                    b.y
+                    (Tuple.first b).y
                 Nothing -> 
                     0
-         
+        getCollision =
+            case headBrick of 
+                Just b ->
+                    Tuple.second b
+                Nothing -> 
+                    Model.Nocollision
     in
-        if length >0 then
-            (True,getY)
-        else
-            (False,0)
+        (getCollision,getY)
 
 
 generateNewBricks : Bool -> Ball -> List Brick -> List Brick
 generateNewBricks flag ball bricks =
     let 
-        bricksTemp = List.map (oneBricksCollision ball)  bricks
+        (bricksTemp,collision) = List.unzip (List.map (oneBricksCollision ball)  bricks)
         filterFunction model =
             not model.collision
     in
