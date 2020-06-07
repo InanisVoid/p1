@@ -18,7 +18,7 @@ brickListInit : List Brick
 brickListInit = generateBricks [] total brickConfig.x brickConfig.y 
 
 initPlayer : Player
-initPlayer = Player ballInit batInit brickListInit False False False 0 teachers
+initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0
 
 init : Model 
 init = Model initPlayer initPlayer
@@ -51,6 +51,8 @@ view model =
     in
         div [id  "wrapper"]
         [   
+            div [id "score1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][Html.text(String.fromFloat p1.score)],
+            div [id "score2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][Html.text(String.fromFloat p2.score)],            
             div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],
             div [id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2],
             div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
@@ -59,7 +61,7 @@ view model =
                 div [] [Html.text p1FirstTeacher.description],
                 button[onClick NextTeacher1] [Html.text "Next"]
             ],
-            div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][
+            div [id "but2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][
                 button[onClick PreviousTeacher2] [Html.text "Previous"],
                 div [] [Html.text p2FirstTeacher.name],
                 div [] [Html.text p2FirstTeacher.description],

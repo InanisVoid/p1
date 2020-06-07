@@ -27,7 +27,7 @@ hSS : Teacher
 hSS = Teacher 1.2 1 1 1 "HSS" "BallSpeed*1.2"
 
 teachers : List Teacher
-teachers = [hSS,mN,mK,zQ]
+teachers = [mN,mK,zQ,hSS]
 
 getFirstTeacher : List Teacher -> Teacher
 getFirstTeacher model = 

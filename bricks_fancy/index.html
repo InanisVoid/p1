@@ -5162,9 +5162,9 @@ var $author$project$Model$Model = F2(
 	function (player1, player2) {
 		return {player1: player1, player2: player2};
 	});
-var $author$project$Model$Player = F8(
-	function (ball, bat, bricks, moveLeft, moveRight, lose, direction, teachers) {
-		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight, teachers: teachers};
+var $author$project$Model$Player = F9(
+	function (ball, bat, bricks, moveLeft, moveRight, lose, direction, teachers, score) {
+		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight, score: score, teachers: teachers};
 	});
 var $author$project$Model$Ball = F6(
 	function (x, y, r, edge, xSpeed, ySpeed) {
@@ -5190,7 +5190,7 @@ var $author$project$Model$Bat = F6(
 	function (x, y, width, height, edge, xSpeed) {
 		return {edge: edge, height: height, width: width, x: x, xSpeed: xSpeed, y: y};
 	});
-var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 20 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
+var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 1000 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
 var $author$project$Model$batRecUpdate = function (model) {
 	var halfy = model.height / 2;
 	var newy = model.y + halfy;
@@ -5260,13 +5260,13 @@ var $author$project$Heros$Teacher = F6(
 	function (ballSpeed, batSpeed, batWidth, score, name, description) {
 		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score};
 	});
-var $author$project$Heros$hSS = A6($author$project$Heros$Teacher, 2, 1, 1, 1, 'HSS', 'BallSpeed*1.2');
+var $author$project$Heros$hSS = A6($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2');
 var $author$project$Heros$mK = A6($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2');
 var $author$project$Heros$mN = A6($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2');
 var $author$project$Heros$zQ = A6($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2');
 var $author$project$Heros$teachers = _List_fromArray(
-	[$author$project$Heros$hSS, $author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ]);
-var $author$project$View$initPlayer = A8($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0, $author$project$Heros$teachers);
+	[$author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ, $author$project$Heros$hSS]);
+var $author$project$View$initPlayer = A9($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0, $author$project$Heros$teachers, 0);
 var $author$project$View$init = A2($author$project$Model$Model, $author$project$View$initPlayer, $author$project$View$initPlayer);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -5847,7 +5847,7 @@ var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				((!p1.lose) || p1.lose) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
+				((!p1.lose) && ((!p2.lose) && ((p1.score < 1000) && (p2.score < 1000)))) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
 				$elm$browser$Browser$Events$onKeyUp(
 				A2(
 					$elm$json$Json$Decode$map,
@@ -5969,17 +5969,12 @@ var $author$project$Update$updateBall = function (model) {
 		model,
 		{ball: newball});
 };
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Update$generateNewBat = F3(
 	function (teacher, direction, model) {
 		var dt = teacher.batSpeed;
 		var xSpeed = dt * direction;
 		var xNew = model.x + xSpeed;
 		var batTemp = A6($author$project$Model$Bat, xNew, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, xSpeed);
-		var d = A2(
-			$elm$core$Debug$log,
-			'bat',
-			$author$project$Model$batRecUpdate(batTemp));
 		return $author$project$Model$batRecUpdate(batTemp);
 	});
 var $author$project$Update$updateBat = function (model) {
@@ -6019,6 +6014,25 @@ var $author$project$Update$addOneLineBricks = function (onePlayer) {
 		onePlayer,
 		{bricks: newBricks});
 };
+var $elm$core$Basics$round = _Basics_round;
+var $author$project$Update$clearBrickScore = F2(
+	function (model, scorenow) {
+		var _v0 = $elm$core$Basics$round(model);
+		switch (_v0) {
+			case 0:
+				return scorenow + 10;
+			case 2:
+				return scorenow + 8;
+			case 4:
+				return scorenow + 6;
+			case 6:
+				return scorenow + 4;
+			case 8:
+				return scorenow + 2;
+			default:
+				return scorenow + 1;
+		}
+	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6053,6 +6067,21 @@ var $author$project$Update$allBricksCollision = F2(
 			$author$project$Update$oneBricksCollision(ball),
 			bricks);
 		var filterBricks = A2($elm$core$List$filter, filterFunction, bricksTemp);
+		var getYList = function () {
+			var filterBricksList = A2(
+				$elm$core$List$map,
+				function (value) {
+					return value.a;
+				},
+				filterBricks);
+			return A2(
+				$elm$core$List$map,
+				function (value) {
+					return value.y;
+				},
+				filterBricksList);
+		}();
+		var brickscore = A3($elm$core$List$foldl, $author$project$Update$clearBrickScore, 0, getYList);
 		var headBrick = $elm$core$List$head(filterBricks);
 		var getCollision = function () {
 			if (headBrick.$ === 'Just') {
@@ -6071,8 +6100,25 @@ var $author$project$Update$allBricksCollision = F2(
 			}
 		}();
 		var length = $elm$core$List$length(filterBricks);
-		return _Utils_Tuple2(getCollision, getY);
+		return _Utils_Tuple3(getCollision, getY, brickscore);
 	});
+var $author$project$Update$clearLineBonus = function (model) {
+	var _v0 = $elm$core$Basics$round(model);
+	switch (_v0) {
+		case 0:
+			return 300;
+		case 2:
+			return 200;
+		case 4:
+			return 100;
+		case 6:
+			return 50;
+		case 8:
+			return 50;
+		default:
+			return 25;
+	}
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -6144,6 +6190,7 @@ var $author$project$Update$generateNewBricks = F3(
 	});
 var $author$project$Update$updateBricks = F2(
 	function (otherPlayer, me) {
+		var teacher = $author$project$Heros$getFirstTeacher(me.teachers);
 		var changeSpeed = F2(
 			function (flagship, system) {
 				switch (flagship.$) {
@@ -6162,17 +6209,19 @@ var $author$project$Update$updateBricks = F2(
 		var _v0 = A2($author$project$Update$allBricksCollision, me.ball, me.bricks);
 		var flag = _v0.a;
 		var filteredY = _v0.b;
+		var brickScore = _v0.c;
 		var newBricks = A3(
 			$author$project$Update$generateNewBricks,
 			!_Utils_eq(flag, $author$project$Model$Nocollision),
 			me.ball,
 			me.bricks);
+		var getClearLineBonus = ((!_Utils_eq(flag, $author$project$Model$Nocollision)) && (!A2($author$project$Update$clearLines, newBricks, filteredY))) ? $author$project$Update$clearLineBonus(filteredY) : 0;
 		var getNewOtherPlayer = ((!_Utils_eq(flag, $author$project$Model$Nocollision)) && (!A2($author$project$Update$clearLines, newBricks, filteredY))) ? $author$project$Update$addOneLineBricks(otherPlayer) : otherPlayer;
 		var newball = A2(changeSpeed, flag, me.ball);
 		return _Utils_Tuple2(
 			_Utils_update(
 				me,
-				{ball: newball, bricks: newBricks}),
+				{ball: newball, bricks: newBricks, score: me.score + ((brickScore + getClearLineBonus) * teacher.score)}),
 			getNewOtherPlayer);
 	});
 var $author$project$Update$animate = function (model) {
@@ -6497,6 +6546,7 @@ var $author$project$Messages$PreviousTeacher1 = {$: 'PreviousTeacher1'};
 var $author$project$Messages$PreviousTeacher2 = {$: 'PreviousTeacher2'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -6520,7 +6570,6 @@ var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
 var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $author$project$View$ball = function (ballInput) {
 	var createBallFormat = function (model) {
@@ -6657,6 +6706,32 @@ var $author$project$View$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
+						$elm$svg$Svg$Attributes$id('score1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromFloat(p1.score))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('score2'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'right')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromFloat(p2.score))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
 						$elm$svg$Svg$Attributes$id('div1'),
 						A2($elm$html$Html$Attributes$style, 'width', '50%'),
 						A2($elm$html$Html$Attributes$style, 'float', 'left')
@@ -6726,7 +6801,7 @@ var $author$project$View$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$id('but1'),
+						$elm$svg$Svg$Attributes$id('but2'),
 						A2($elm$html$Html$Attributes$style, 'width', '50%'),
 						A2($elm$html$Html$Attributes$style, 'float', 'right')
 					]),

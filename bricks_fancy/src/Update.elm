@@ -4,6 +4,7 @@ import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidt
 import Heros exposing (getPreviousTeacher,getNextTeacher,getFirstTeacher,Teacher)
 import Debug
 import Model exposing (batConfig)
+-- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -148,7 +149,7 @@ generateNewBat teacher direction model =
         xSpeed = dt*direction
         xNew =  model.x + xSpeed
         batTemp = Bat xNew model.y (batConfig.width*teacher.batWidth) model.height recInit xSpeed
-        d = Debug.log "bat" (batRecUpdate batTemp)
+        -- d = Debug.log "bat" (batRecUpdate batTemp)
     in
         batRecUpdate batTemp
 
@@ -222,27 +223,32 @@ updateBricks otherPlayer me =
         
        
 
-        (flag, filteredY)=allBricksCollision me.ball me.bricks
+        (flag, filteredY, brickScore)=allBricksCollision me.ball me.bricks
         newball = changeSpeed flag me.ball
         newBricks = generateNewBricks (flag /= Model.Nocollision) me.ball me.bricks
         
         getNewOtherPlayer =
-            -- let 
-            --     d=Debug.log "FilterY" filteredY
-            -- in
-                if ((flag /= Model.Nocollision) && not (clearLines newBricks filteredY)) then
-                    addOneLineBricks otherPlayer
-                else
-                    otherPlayer
+            if ((flag /= Model.Nocollision) && not (clearLines newBricks filteredY)) then
+                addOneLineBricks otherPlayer
+            else
+                otherPlayer
+
+        getClearLineBonus =
+            if ((flag /= Model.Nocollision) && not (clearLines newBricks filteredY)) then
+                clearLineBonus filteredY
+            else
+                0
+        
+        teacher= getFirstTeacher me.teachers
     in
-        ({me| ball= newball, bricks=newBricks}, getNewOtherPlayer )
+        ({me| ball= newball, bricks=newBricks,score = (me.score + (brickScore + getClearLineBonus)*teacher.score) }, getNewOtherPlayer )
 
 oneBricksCollision : Ball -> Brick -> (Brick,Model.Collisiontype) 
 oneBricksCollision ball onebrick =
     ({onebrick | collision = ((recCollisionTest onebrick.edge ball.edge) /= Model.Nocollision)},recCollisionTest onebrick.edge ball.edge)
 
 
-allBricksCollision : Ball -> List Brick -> (Model.Collisiontype,Float)
+allBricksCollision : Ball -> List Brick -> (Model.Collisiontype,Float,Float)
 allBricksCollision ball bricks=
     let
         bricksTemp = List.map (oneBricksCollision ball)  bricks
@@ -266,8 +272,18 @@ allBricksCollision ball bricks=
                     Tuple.second b
                 Nothing -> 
                     Model.Nocollision
+
+        getYList =
+            let
+                filterBricksList = List.map (\value-> (Tuple.first value)) filterBricks
+            in
+                 List.map (\value->value.y) filterBricksList
+
+        brickscore = List.foldl clearBrickScore 0 getYList
+        -- ys= Debug.log "Y" getYList
+        -- br = Debug.log "brickscore" brickscore
     in
-        (getCollision,getY)
+        (getCollision,getY,brickscore)
 
 
 generateNewBricks : Bool -> Ball -> List Brick -> List Brick
@@ -315,3 +331,46 @@ addNewBricks model =
         number = 10
     in
         generateBricks model number brickConfig.x brickConfig.y
+
+
+clearBrickScore : Float -> Float -> Float
+clearBrickScore  model scorenow =
+    -- let
+    --     sn =Debug.log "sn" scorenow
+    --     m = Debug.log "in" (round model)
+    -- in
+    
+    case (round model) of 
+        0 ->
+            scorenow + 10
+        2 ->
+            scorenow + 8
+        4 ->
+            scorenow + 6
+        6 ->
+            scorenow + 4
+        8 ->
+            scorenow + 2
+        _ ->
+            scorenow + 1
+
+
+
+clearLineBonus : Float -> Float
+clearLineBonus model =
+    -- let
+    --     m = Debug.log "in" (round model)
+    -- in
+    case (round model) of 
+        0 ->
+            300
+        2 ->
+            200
+        4 ->
+            100
+        6 ->
+            50
+        8 ->
+            50
+        _ ->
+            25
