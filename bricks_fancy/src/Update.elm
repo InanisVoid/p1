@@ -1,7 +1,9 @@
 module Update exposing (update)
 import Messages exposing (Msg(..))
 import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate,brickConfig,generateBricks,brickRecUpdate)
-
+import Heros exposing (getPreviousTeacher,getNextTeacher,getFirstTeacher,Teacher)
+import Debug
+import Model exposing (batConfig)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -39,6 +41,41 @@ update msg model =
                 p= {pTemp | moveRight = on, moveLeft = False}
             in
                 ( {model| player2=checkDirection p}
+                , Cmd.none
+                )
+        PreviousTeacher1 ->
+            let     
+                pTemp = model.player1
+                p = {pTemp | teachers = getPreviousTeacher pTemp.teachers}
+            in
+                ( {model| player1=p}
+                , Cmd.none
+                )
+
+        NextTeacher1 ->
+            let     
+                pTemp = model.player1
+                p = {pTemp | teachers = getNextTeacher pTemp.teachers}
+            in
+                ( {model| player1=p}
+                , Cmd.none
+                )
+
+        PreviousTeacher2 ->
+            let     
+                pTemp = model.player2
+                p = {pTemp | teachers = getPreviousTeacher pTemp.teachers}
+            in
+                ( {model| player2=p}
+                , Cmd.none
+                )
+
+        NextTeacher2 ->
+            let     
+                pTemp = model.player2
+                p = {pTemp | teachers = getNextTeacher pTemp.teachers}
+            in
+                ( {model| player2=p}
                 , Cmd.none
                 )
 
@@ -102,15 +139,16 @@ checkLose model =
 -- Bat
 updateBat : Player -> Player
 updateBat  model=
-    { model | bat = generateNewBat  model.direction model.bat }
+    { model | bat = generateNewBat (getFirstTeacher model.teachers) model.direction model.bat }
 
-generateNewBat : Float -> Bat -> Bat 
-generateNewBat  direction model =
+generateNewBat : Teacher-> Float -> Bat -> Bat 
+generateNewBat teacher direction model =
     let
-        dt = 1.0
+        dt = teacher.batSpeed
         xSpeed = dt*direction
         xNew =  model.x + xSpeed
-        batTemp = Bat xNew model.y model.width model.height recInit xSpeed
+        batTemp = Bat xNew model.y (batConfig.width*teacher.batWidth) model.height recInit xSpeed
+        d = Debug.log "bat" (batRecUpdate batTemp)
     in
         batRecUpdate batTemp
 
@@ -121,16 +159,17 @@ generateNewBat  direction model =
 updateBall : Player -> Player
 updateBall model =
     let 
+        teachernow = getFirstTeacher model.teachers
         newball =
-            generateNewBall  <| wallCollision  <| batCollision model.bat  model.ball
+            generateNewBall teachernow <| wallCollision  <| batCollision model.bat  model.ball
     in
         { model | ball = newball }
 
-generateNewBall : Ball -> Ball
-generateNewBall model =
+generateNewBall : Teacher -> Ball -> Ball
+generateNewBall teacher model =
      let
-        xNew = model.x + model.xSpeed
-        yNew = model.y + model.ySpeed
+        xNew = model.x + model.xSpeed*teacher.ballSpeed
+        yNew = model.y + model.ySpeed*teacher.ballSpeed
         ballTemp = Ball xNew yNew model.r recInit model.xSpeed model.ySpeed
     in
         ballRecUpdate ballTemp

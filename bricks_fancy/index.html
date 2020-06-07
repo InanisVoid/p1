@@ -5162,9 +5162,9 @@ var $author$project$Model$Model = F2(
 	function (player1, player2) {
 		return {player1: player1, player2: player2};
 	});
-var $author$project$Model$Player = F7(
-	function (ball, bat, bricks, moveLeft, moveRight, lose, direction) {
-		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight};
+var $author$project$Model$Player = F8(
+	function (ball, bat, bricks, moveLeft, moveRight, lose, direction, teachers) {
+		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight, teachers: teachers};
 	});
 var $author$project$Model$Ball = F6(
 	function (x, y, r, edge, xSpeed, ySpeed) {
@@ -5190,7 +5190,7 @@ var $author$project$Model$Bat = F6(
 	function (x, y, width, height, edge, xSpeed) {
 		return {edge: edge, height: height, width: width, x: x, xSpeed: xSpeed, y: y};
 	});
-var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 1000 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
+var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 70 / 2, 20 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
 var $author$project$Model$batRecUpdate = function (model) {
 	var halfy = model.height / 2;
 	var newy = model.y + halfy;
@@ -5256,7 +5256,17 @@ var $author$project$Model$generateBricks = F4(
 	});
 var $author$project$Model$total = 50;
 var $author$project$View$brickListInit = A4($author$project$Model$generateBricks, _List_Nil, $author$project$Model$total, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
-var $author$project$View$initPlayer = A7($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0);
+var $author$project$Heros$Teacher = F6(
+	function (ballSpeed, batSpeed, batWidth, score, name, description) {
+		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score};
+	});
+var $author$project$Heros$hSS = A6($author$project$Heros$Teacher, 2, 1, 1, 1, 'HSS', 'BallSpeed*1.2');
+var $author$project$Heros$mK = A6($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2');
+var $author$project$Heros$mN = A6($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2');
+var $author$project$Heros$zQ = A6($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2');
+var $author$project$Heros$teachers = _List_fromArray(
+	[$author$project$Heros$hSS, $author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ]);
+var $author$project$View$initPlayer = A8($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0, $author$project$Heros$teachers);
 var $author$project$View$init = A2($author$project$Model$Model, $author$project$View$initPlayer, $author$project$View$initPlayer);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -5908,11 +5918,34 @@ var $author$project$Update$batCollision = F2(
 			ball,
 			{xSpeed: newSpeed.a, ySpeed: newSpeed.b});
 	});
-var $author$project$Update$generateNewBall = function (model) {
-	var yNew = model.y + model.ySpeed;
-	var xNew = model.x + model.xSpeed;
-	var ballTemp = A6($author$project$Model$Ball, xNew, yNew, model.r, $author$project$Model$recInit, model.xSpeed, model.ySpeed);
-	return $author$project$Model$ballRecUpdate(ballTemp);
+var $author$project$Update$generateNewBall = F2(
+	function (teacher, model) {
+		var yNew = model.y + (model.ySpeed * teacher.ballSpeed);
+		var xNew = model.x + (model.xSpeed * teacher.ballSpeed);
+		var ballTemp = A6($author$project$Model$Ball, xNew, yNew, model.r, $author$project$Model$recInit, model.xSpeed, model.ySpeed);
+		return $author$project$Model$ballRecUpdate(ballTemp);
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Heros$teacherConfig = A6($author$project$Heros$Teacher, 1, 1, 1, 1, '', '');
+var $author$project$Heros$getFirstTeacher = function (model) {
+	var first = $elm$core$List$head(model);
+	var getT = function () {
+		if (first.$ === 'Just') {
+			var t = first.a;
+			return t;
+		} else {
+			return $author$project$Heros$teacherConfig;
+		}
+	}();
+	return getT;
 };
 var $author$project$Update$wallCollision = function (ball) {
 	var changeSpeed = F3(
@@ -5926,26 +5959,38 @@ var $author$project$Update$wallCollision = function (ball) {
 		{xSpeed: newXSpeed, ySpeed: newYSpeed});
 };
 var $author$project$Update$updateBall = function (model) {
-	var newball = $author$project$Update$generateNewBall(
+	var teachernow = $author$project$Heros$getFirstTeacher(model.teachers);
+	var newball = A2(
+		$author$project$Update$generateNewBall,
+		teachernow,
 		$author$project$Update$wallCollision(
 			A2($author$project$Update$batCollision, model.bat, model.ball)));
 	return _Utils_update(
 		model,
 		{ball: newball});
 };
-var $author$project$Update$generateNewBat = F2(
-	function (direction, model) {
-		var dt = 1.0;
+var $elm$core$Debug$log = _Debug_log;
+var $author$project$Update$generateNewBat = F3(
+	function (teacher, direction, model) {
+		var dt = teacher.batSpeed;
 		var xSpeed = dt * direction;
 		var xNew = model.x + xSpeed;
-		var batTemp = A6($author$project$Model$Bat, xNew, model.y, model.width, model.height, $author$project$Model$recInit, xSpeed);
+		var batTemp = A6($author$project$Model$Bat, xNew, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, xSpeed);
+		var d = A2(
+			$elm$core$Debug$log,
+			'bat',
+			$author$project$Model$batRecUpdate(batTemp));
 		return $author$project$Model$batRecUpdate(batTemp);
 	});
 var $author$project$Update$updateBat = function (model) {
 	return _Utils_update(
 		model,
 		{
-			bat: A2($author$project$Update$generateNewBat, model.direction, model.bat)
+			bat: A3(
+				$author$project$Update$generateNewBat,
+				$author$project$Heros$getFirstTeacher(model.teachers),
+				model.direction,
+				model.bat)
 		});
 };
 var $author$project$Update$addNewBricks = function (model) {
@@ -5985,15 +6030,6 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Update$oneBricksCollision = F2(
 	function (ball, onebrick) {
@@ -6177,6 +6213,173 @@ var $author$project$Update$checkDirection = function (model) {
 		model,
 		{direction: 0}));
 };
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $author$project$Heros$getNextTeacher = function (model) {
+	var teacherTail = A2($elm$core$List$drop, 1, model);
+	var firstTeacher = A2($elm$core$List$take, 1, model);
+	var newTeacher = A2($elm$core$List$append, teacherTail, firstTeacher);
+	return newTeacher;
+};
+var $author$project$Heros$getPreviousTeacher = function (model) {
+	var teacherTail = A2($elm$core$List$drop, 3, model);
+	var teacherHead = A2($elm$core$List$take, 3, model);
+	var newTeacher = A2($elm$core$List$append, teacherTail, teacherHead);
+	return newTeacher;
+};
 var $author$project$Update$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6232,6 +6435,54 @@ var $author$project$Update$update = F2(
 							player2: $author$project$Update$checkDirection(p)
 						}),
 					$elm$core$Platform$Cmd$none);
+			case 'PreviousTeacher1':
+				var pTemp = model.player1;
+				var p = _Utils_update(
+					pTemp,
+					{
+						teachers: $author$project$Heros$getPreviousTeacher(pTemp.teachers)
+					});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player1: p}),
+					$elm$core$Platform$Cmd$none);
+			case 'NextTeacher1':
+				var pTemp = model.player1;
+				var p = _Utils_update(
+					pTemp,
+					{
+						teachers: $author$project$Heros$getNextTeacher(pTemp.teachers)
+					});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player1: p}),
+					$elm$core$Platform$Cmd$none);
+			case 'PreviousTeacher2':
+				var pTemp = model.player2;
+				var p = _Utils_update(
+					pTemp,
+					{
+						teachers: $author$project$Heros$getPreviousTeacher(pTemp.teachers)
+					});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player2: p}),
+					$elm$core$Platform$Cmd$none);
+			case 'NextTeacher2':
+				var pTemp = model.player2;
+				var p = _Utils_update(
+					pTemp,
+					{
+						teachers: $author$project$Heros$getNextTeacher(pTemp.teachers)
+					});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player2: p}),
+					$elm$core$Platform$Cmd$none);
 			case 'Tick':
 				var time = msg.a;
 				return $author$project$Update$animate(model);
@@ -6240,16 +6491,30 @@ var $author$project$Update$update = F2(
 		}
 	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $author$project$Messages$NextTeacher1 = {$: 'NextTeacher1'};
+var $author$project$Messages$NextTeacher2 = {$: 'NextTeacher2'};
+var $author$project$Messages$PreviousTeacher1 = {$: 'PreviousTeacher1'};
+var $author$project$Messages$PreviousTeacher2 = {$: 'PreviousTeacher2'};
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
 	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
@@ -6371,7 +6636,15 @@ var $author$project$View$playerDemonstrate = function (model) {
 						$author$project$View$bricks(model.bricks))))
 			]));
 };
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$View$view = function (model) {
+	var p2 = model.player2;
+	var p2Teachers = p2.teachers;
+	var p2FirstTeacher = $author$project$Heros$getFirstTeacher(p2Teachers);
+	var p1 = model.player1;
+	var p1Teachers = p1.teachers;
+	var p1FirstTeacher = $author$project$Heros$getFirstTeacher(p1Teachers);
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -6403,6 +6676,96 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$View$playerDemonstrate(model.player2)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('but1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher1)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Previous')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(p1FirstTeacher.name)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(p1FirstTeacher.description)
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher1)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Next')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('but1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'right')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher2)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Previous')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(p2FirstTeacher.name)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(p2FirstTeacher.description)
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher2)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Next')
+							]))
 					]))
 			]));
 };

@@ -2,10 +2,13 @@ module View exposing (..)
 import Model exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (style)
+import Html.Events exposing (onClick)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import String
 import Update exposing (..)
+import Heros exposing (..)
+import Messages exposing (Msg(..))
 -- import Debug
 ballInit : Ball
 ballInit = ballRecUpdate ballConfig
@@ -15,7 +18,7 @@ brickListInit : List Brick
 brickListInit = generateBricks [] total brickConfig.x brickConfig.y 
 
 initPlayer : Player
-initPlayer = Player ballInit batInit brickListInit False False False 0
+initPlayer = Player ballInit batInit brickListInit False False False 0 teachers
 
 init : Model 
 init = Model initPlayer initPlayer
@@ -35,14 +38,34 @@ setStyle3 =
     Html.Attributes.style "postion" "fixed"
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
-    -- let
-    --    p1=model.player1
-    -- --    d=Debug.log "Bricks" p1.bricks
-    -- in
-        div [id  "wrapper"][div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],div[id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2]]
+    let
+       p1=model.player1
+       p1Teachers = p1.teachers
+       p1FirstTeacher = getFirstTeacher p1Teachers
 
+       p2=model.player2
+       p2Teachers = p2.teachers
+       p2FirstTeacher = getFirstTeacher p2Teachers
+    in
+        div [id  "wrapper"]
+        [   
+            div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],
+            div [id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2],
+            div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
+                button[onClick PreviousTeacher1] [Html.text "Previous"],
+                div [] [Html.text p1FirstTeacher.name],
+                div [] [Html.text p1FirstTeacher.description],
+                button[onClick NextTeacher1] [Html.text "Next"]
+            ],
+            div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][
+                button[onClick PreviousTeacher2] [Html.text "Previous"],
+                div [] [Html.text p2FirstTeacher.name],
+                div [] [Html.text p2FirstTeacher.description],
+                button[onClick NextTeacher2] [Html.text "Next"]
+            ]
+        ]
 
 
 playerDemonstrate : Player -> Html msg

@@ -1,4 +1,5 @@
 module Model exposing (..)
+import Heros exposing (Teacher) 
 type alias Rec =
     { cx : Float
     , cy : Float
@@ -61,6 +62,7 @@ type alias Player =
     , moveRight : Bool
     , lose : Bool
     , direction : Float
+    , teachers : List Teacher
     -- , canvasWidth : Int
     -- , canvasHeight : Int
     }
@@ -76,7 +78,7 @@ brickConfig = Brick 0 0 (10/2) (4/2) recInit False
 -- batConfig : Bat
 -- batConfig = Bat (45/2) (70/2) (20/2) (2.5/2) recInit 0
 batConfig : Bat
-batConfig = Bat (45/2) (70/2) (1000/2) (2.5/2) recInit 0
+batConfig = Bat (45/2) (70/2) (20/2) (2.5/2) recInit 0
 
 ballConfig: Ball
 ballConfig = Ball (25/2) (70/2) (1.5/2) recInit (1/2) (-1/2)
@@ -149,4 +151,4 @@ generateBricks bricklist number x y =
         if number == 0 then
             bricklist
         else
-            generateBricks ( (genearateOneBrick x y) :: bricklist ) (number - 1) (nextx x) (ytemp) 
+            generateBricks (  genearateOneBrick x y :: bricklist ) (number - 1) (nextx x) ytemp 
