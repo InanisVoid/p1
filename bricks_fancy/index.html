@@ -6647,17 +6647,6 @@ var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $author$project$View$playerDemonstrate = function (model) {
 	var gWidth = '100';
 	var gHeight = '77';
-	var screen = A2(
-		$elm$svg$Svg$rect,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$fill('#ffffff'),
-				$elm$svg$Svg$Attributes$x('0'),
-				$elm$svg$Svg$Attributes$y('0'),
-				$elm$svg$Svg$Attributes$width(gWidth),
-				$elm$svg$Svg$Attributes$height(gHeight)
-			]),
-		_List_Nil);
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -6675,15 +6664,11 @@ var $author$project$View$playerDemonstrate = function (model) {
 				A2(
 					$elm$core$List$append,
 					_List_fromArray(
-						[screen]),
-					A2(
-						$elm$core$List$append,
-						_List_fromArray(
-							[
-								$author$project$View$ball(model.ball),
-								$author$project$View$bat(model.bat)
-							]),
-						$author$project$View$bricks(model.bricks))))
+						[
+							$author$project$View$ball(model.ball),
+							$author$project$View$bat(model.bat)
+						]),
+					$author$project$View$bricks(model.bricks)))
 			]));
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6711,29 +6696,77 @@ var $author$project$View$view = function (model) {
 	var p1FirstTeacher = $author$project$Heros$getFirstTeacher(p1Teachers);
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$id('wrapper')
+			]),
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$img,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$src('./images/Logo.png'),
-								$elm$svg$Svg$Attributes$width('300'),
-								$elm$svg$Svg$Attributes$height('300')
-							]),
-						_List_Nil)
+						$elm$svg$Svg$Attributes$id('score1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromFloat(p1.score))
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$id('wrapper')
+						$elm$svg$Svg$Attributes$id('score2'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'right')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromFloat(p2.score))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('div1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left'),
+						A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/Logo.png)'),
+						A2($elm$html$Html$Attributes$style, 'background-repeat', 'no-repeat'),
+						A2($elm$html$Html$Attributes$style, 'background-size', '100% 50%'),
+						A2($elm$html$Html$Attributes$style, '-moz-background-size', '100% 50%')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$playerDemonstrate(model.player1)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('div1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left'),
+						A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/Logo.png)'),
+						A2($elm$html$Html$Attributes$style, 'background-repeat', 'no-repeat'),
+						A2($elm$html$Html$Attributes$style, 'background-size', '100% 50%'),
+						A2($elm$html$Html$Attributes$style, '-moz-background-size', '100% 50%')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$playerDemonstrate(model.player2)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('p1'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'left')
 					]),
 				_List_fromArray(
 					[
@@ -6741,203 +6774,142 @@ var $author$project$View$view = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$svg$Svg$Attributes$id('score1'),
-								A2($elm$html$Html$Attributes$style, 'width', '50%'),
-								A2($elm$html$Html$Attributes$style, 'float', 'left')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$elm$core$String$fromFloat(p1.score))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$id('score2'),
-								A2($elm$html$Html$Attributes$style, 'width', '50%'),
-								A2($elm$html$Html$Attributes$style, 'float', 'right')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$elm$core$String$fromFloat(p2.score))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$id('div1'),
-								A2($elm$html$Html$Attributes$style, 'width', '50%'),
-								A2($elm$html$Html$Attributes$style, 'float', 'left')
-							]),
-						_List_fromArray(
-							[
-								$author$project$View$playerDemonstrate(model.player1)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$id('div2'),
-								A2($elm$html$Html$Attributes$style, 'width', '50%'),
-								A2($elm$html$Html$Attributes$style, 'float', 'right')
-							]),
-						_List_fromArray(
-							[
-								$author$project$View$playerDemonstrate(model.player2)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$id('p1'),
+								$elm$svg$Svg$Attributes$id('but1'),
 								A2($elm$html$Html$Attributes$style, 'width', '50%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'left')
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$div,
+								$elm$html$Html$button,
 								_List_fromArray(
 									[
-										$elm$svg$Svg$Attributes$id('but1'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'float', 'left')
+										$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher1)
 									]),
 								_List_fromArray(
 									[
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher1)
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Previous')
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(p1FirstTeacher.name)
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(p1FirstTeacher.description)
-											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher1)
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Next')
-											]))
+										$elm$html$Html$text('Previous')
 									])),
 								A2(
 								$elm$html$Html$div,
+								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$svg$Svg$Attributes$id('img1'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'float', 'right')
+										$elm$html$Html$text(p1FirstTeacher.name)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(p1FirstTeacher.description)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher1)
 									]),
 								_List_fromArray(
 									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(p1FirstTeacher.url),
-												$elm$svg$Svg$Attributes$width('300'),
-												$elm$svg$Svg$Attributes$height('300')
-											]),
-										_List_Nil)
+										$elm$html$Html$text('Next')
 									]))
 							])),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$svg$Svg$Attributes$id('p2'),
+								$elm$svg$Svg$Attributes$id('img1'),
 								A2($elm$html$Html$Attributes$style, 'width', '50%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'right')
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$div,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$svg$Svg$Attributes$id('but2'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'float', 'left')
+										$elm$html$Html$Attributes$src(p1FirstTeacher.url),
+										$elm$svg$Svg$Attributes$width('300'),
+										$elm$svg$Svg$Attributes$height('300')
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id('p2'),
+						A2($elm$html$Html$Attributes$style, 'width', '50%'),
+						A2($elm$html$Html$Attributes$style, 'float', 'right')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$id('but2'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'left')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher2)
 									]),
 								_List_fromArray(
 									[
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher2)
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Previous')
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(p2FirstTeacher.name)
-											])),
-										A2(
-										$elm$html$Html$div,
-										_List_Nil,
-										_List_fromArray(
-											[
-												$elm$html$Html$text(p2FirstTeacher.description)
-											])),
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher2)
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Next')
-											]))
+										$elm$html$Html$text('Previous')
 									])),
 								A2(
 								$elm$html$Html$div,
+								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$svg$Svg$Attributes$id('img2'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'float', 'right')
+										$elm$html$Html$text(p2FirstTeacher.name)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(p2FirstTeacher.description)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher2)
 									]),
 								_List_fromArray(
 									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(p2FirstTeacher.url),
-												$elm$svg$Svg$Attributes$width('300'),
-												$elm$svg$Svg$Attributes$height('300')
-											]),
-										_List_Nil)
+										$elm$html$Html$text('Next')
 									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$id('img2'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'right')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$img,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$src(p2FirstTeacher.url),
+										$elm$svg$Svg$Attributes$width('300'),
+										$elm$svg$Svg$Attributes$height('300')
+									]),
+								_List_Nil)
 							]))
 					]))
 			]));

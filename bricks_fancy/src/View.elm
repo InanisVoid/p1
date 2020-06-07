@@ -50,15 +50,29 @@ view model =
        p2Teachers = p2.teachers
        p2FirstTeacher = getFirstTeacher p2Teachers
     in
-        div[][
-        div[][img [src "./images/Logo.png", width "300", height "300"][]],
+        -- div[][
+        -- div[ ][img [src "./images/Logo.png", width "300", height "300"][]],
         div [id  "wrapper"]
         [   
             -- div[][img [src "Logo.png", width "300", height "300"][]],
             div [id "score1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][Html.text(String.fromFloat p1.score)],
             div [id "score2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][Html.text(String.fromFloat p2.score)],            
-            div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],
-            div [id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2],
+            div [
+                id "div1",Html.Attributes.style "width" "50%",
+                Html.Attributes.style "float" "left" ,
+                Html.Attributes.style "background-image" "url(./images/Logo.png)",
+                Html.Attributes.style "background-repeat" "no-repeat",
+                Html.Attributes.style "background-size" "100% 50%",
+                Html.Attributes.style "-moz-background-size" "100% 50%"
+                ][playerDemonstrate model.player1],
+           div [
+                id "div1",Html.Attributes.style "width" "50%",
+                Html.Attributes.style "float" "left" ,
+                Html.Attributes.style "background-image" "url(./images/Logo.png)",
+                Html.Attributes.style "background-repeat" "no-repeat",
+                Html.Attributes.style "background-size" "100% 50%",
+                Html.Attributes.style "-moz-background-size" "100% 50%"
+                ][playerDemonstrate model.player2],
             div[id "p1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
                 div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
                     button[onClick PreviousTeacher1] [Html.text "Previous"],
@@ -78,7 +92,7 @@ view model =
                  div[id "img2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][img [src p2FirstTeacher.url, width "300", height "300"][]]
             ]
         ]
-        ]
+        -- ]
 
 playerDemonstrate : Player -> Html msg
 playerDemonstrate model =
@@ -86,12 +100,12 @@ playerDemonstrate model =
        
         gWidth = "100"
         gHeight = "77"
-        screen = rect [fill "#ffffff", x "0", y "0", width gWidth, height gHeight] []
+        -- screen = rect [fill "#ffffff", x "0", y "0", width gWidth, height gHeight] []
     in
 
         div [setStyle1,setStyle2,setStyle3]
             [ svg [width "100%", height "100%", viewBox <| "0 0 " ++ gWidth ++ " " ++ gHeight]
-              (List.append [screen] <| List.append [ball model.ball, bat model.bat] <| bricks model.bricks )
+              (List.append [ball model.ball, bat model.bat] <| bricks model.bricks )
             ]
 
 bricks : List Brick -> List (Html msg)
