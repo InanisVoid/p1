@@ -5256,14 +5256,14 @@ var $author$project$Model$generateBricks = F4(
 	});
 var $author$project$Model$total = 50;
 var $author$project$View$brickListInit = A4($author$project$Model$generateBricks, _List_Nil, $author$project$Model$total, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
-var $author$project$Heros$Teacher = F6(
-	function (ballSpeed, batSpeed, batWidth, score, name, description) {
-		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score};
+var $author$project$Heros$Teacher = F7(
+	function (ballSpeed, batSpeed, batWidth, score, name, description, url) {
+		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score, url: url};
 	});
-var $author$project$Heros$hSS = A6($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2');
-var $author$project$Heros$mK = A6($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2');
-var $author$project$Heros$mN = A6($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2');
-var $author$project$Heros$zQ = A6($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2');
+var $author$project$Heros$hSS = A7($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2', './images/HSS.png');
+var $author$project$Heros$mK = A7($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2', './images/MK.png');
+var $author$project$Heros$mN = A7($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2', './images/MN.png');
+var $author$project$Heros$zQ = A7($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2', './images/ZQ.png');
 var $author$project$Heros$teachers = _List_fromArray(
 	[$author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ, $author$project$Heros$hSS]);
 var $author$project$View$initPlayer = A9($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0, $author$project$Heros$teachers, 0);
@@ -5934,7 +5934,7 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $author$project$Heros$teacherConfig = A6($author$project$Heros$Teacher, 1, 1, 1, 1, '', '');
+var $author$project$Heros$teacherConfig = A7($author$project$Heros$Teacher, 1, 1, 1, 1, '', '', '');
 var $author$project$Heros$getFirstTeacher = function (model) {
 	var first = $elm$core$List$head(model);
 	var getT = function () {
@@ -6547,7 +6547,9 @@ var $author$project$Messages$PreviousTeacher2 = {$: 'PreviousTeacher2'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
+var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6589,7 +6591,6 @@ var $author$project$View$ball = function (ballInput) {
 	};
 	return createBallFormat(ballInput);
 };
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
@@ -6685,6 +6686,20 @@ var $author$project$View$playerDemonstrate = function (model) {
 						$author$project$View$bricks(model.bricks))))
 			]));
 };
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$View$view = function (model) {
@@ -6696,150 +6711,233 @@ var $author$project$View$view = function (model) {
 	var p1FirstTeacher = $author$project$Heros$getFirstTeacher(p1Teachers);
 	return A2(
 		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$id('wrapper')
-			]),
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
+				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$id('score1'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'left')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromFloat(p1.score))
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src('./images/Logo.png'),
+								$elm$svg$Svg$Attributes$width('300'),
+								$elm$svg$Svg$Attributes$height('300')
+							]),
+						_List_Nil)
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$id('score2'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'right')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromFloat(p2.score))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id('div1'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'left')
-					]),
-				_List_fromArray(
-					[
-						$author$project$View$playerDemonstrate(model.player1)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id('div2'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'right')
-					]),
-				_List_fromArray(
-					[
-						$author$project$View$playerDemonstrate(model.player2)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id('but1'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'left')
+						$elm$svg$Svg$Attributes$id('wrapper')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$button,
+						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher1)
+								$elm$svg$Svg$Attributes$id('score1'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'left')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Previous')
+								$elm$html$Html$text(
+								$elm$core$String$fromFloat(p1.score))
 							])),
 						A2(
 						$elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(p1FirstTeacher.name)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(p1FirstTeacher.description)
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher1)
+								$elm$svg$Svg$Attributes$id('score2'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'right')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Next')
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id('but2'),
-						A2($elm$html$Html$Attributes$style, 'width', '50%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'right')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher2)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Previous')
+								$elm$html$Html$text(
+								$elm$core$String$fromFloat(p2.score))
 							])),
 						A2(
 						$elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(p2FirstTeacher.name)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(p2FirstTeacher.description)
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher2)
+								$elm$svg$Svg$Attributes$id('div1'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'left')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Next')
+								$author$project$View$playerDemonstrate(model.player1)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$id('div2'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'right')
+							]),
+						_List_fromArray(
+							[
+								$author$project$View$playerDemonstrate(model.player2)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$id('p1'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'left')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$id('but1'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'float', 'left')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher1)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Previous')
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(p1FirstTeacher.name)
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(p1FirstTeacher.description)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher1)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Next')
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$id('img1'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'float', 'right')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$img,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$src(p1FirstTeacher.url),
+												$elm$svg$Svg$Attributes$width('300'),
+												$elm$svg$Svg$Attributes$height('300')
+											]),
+										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$id('p2'),
+								A2($elm$html$Html$Attributes$style, 'width', '50%'),
+								A2($elm$html$Html$Attributes$style, 'float', 'right')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$id('but2'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'float', 'left')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Messages$PreviousTeacher2)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Previous')
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(p2FirstTeacher.name)
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(p2FirstTeacher.description)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick($author$project$Messages$NextTeacher2)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Next')
+											]))
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$id('img2'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'float', 'right')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$img,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$src(p2FirstTeacher.url),
+												$elm$svg$Svg$Attributes$width('300'),
+												$elm$svg$Svg$Attributes$height('300')
+											]),
+										_List_Nil)
+									]))
 							]))
 					]))
 			]));

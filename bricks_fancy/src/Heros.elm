@@ -8,23 +8,24 @@ type alias Teacher =
     ,   score : Float
     ,   name : String
     ,   description : String
+    ,   url : String
     }
 
 
 teacherConfig : Teacher
-teacherConfig = Teacher 1 1 1 1 "" ""
+teacherConfig = Teacher 1 1 1 1 "" "" ""
 
 mN : Teacher
-mN = Teacher 1 1 1 1.2 "MN" "Score*1.2"
+mN = Teacher 1 1 1 1.2 "MN" "Score*1.2" "./images/MN.png"
 
 mK : Teacher
-mK = Teacher 1 1 1.2 1 "MK" "BatLength*1.2"
+mK = Teacher 1 1 1.2 1 "MK" "BatLength*1.2" "./images/MK.png"
 
 zQ : Teacher
-zQ = Teacher 1 1.2 1 1 "ZQ" "BatSpeed*1.2"
+zQ = Teacher 1 1.2 1 1 "ZQ" "BatSpeed*1.2" "./images/ZQ.png"
 
 hSS : Teacher
-hSS = Teacher 1.2 1 1 1 "HSS" "BallSpeed*1.2"
+hSS = Teacher 1.2 1 1 1 "HSS" "BallSpeed*1.2" "./images/HSS.png"
 
 teachers : List Teacher
 teachers = [mN,mK,zQ,hSS]

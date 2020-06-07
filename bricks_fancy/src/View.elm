@@ -1,8 +1,9 @@
 module View exposing (..)
 import Model exposing (..)
 import Html exposing (..)
-import Html.Attributes exposing (style)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (style,src)
+import Html.Events exposing (..)
+import Http
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import String
@@ -49,26 +50,35 @@ view model =
        p2Teachers = p2.teachers
        p2FirstTeacher = getFirstTeacher p2Teachers
     in
+        div[][
+        div[][img [src "./images/Logo.png", width "300", height "300"][]],
         div [id  "wrapper"]
         [   
+            -- div[][img [src "Logo.png", width "300", height "300"][]],
             div [id "score1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][Html.text(String.fromFloat p1.score)],
             div [id "score2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][Html.text(String.fromFloat p2.score)],            
             div [id "div1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][playerDemonstrate model.player1],
             div [id "div2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][playerDemonstrate model.player2],
-            div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
-                button[onClick PreviousTeacher1] [Html.text "Previous"],
-                div [] [Html.text p1FirstTeacher.name],
-                div [] [Html.text p1FirstTeacher.description],
-                button[onClick NextTeacher1] [Html.text "Next"]
+            div[id "p1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
+                div [id "but1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
+                    button[onClick PreviousTeacher1] [Html.text "Previous"],
+                    div [] [Html.text p1FirstTeacher.name],
+                    div [] [Html.text p1FirstTeacher.description],
+                    button[onClick NextTeacher1] [Html.text "Next"]
+                ],
+                div[id "img1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][img [src p1FirstTeacher.url, width "300", height "300"][]]
             ],
-            div [id "but2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][
-                button[onClick PreviousTeacher2] [Html.text "Previous"],
-                div [] [Html.text p2FirstTeacher.name],
-                div [] [Html.text p2FirstTeacher.description],
-                button[onClick NextTeacher2] [Html.text "Next"]
+            div[id "p2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][
+                div [id "but2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left"][
+                    button[onClick PreviousTeacher2] [Html.text "Previous"],
+                    div [] [Html.text p2FirstTeacher.name],
+                    div [] [Html.text p2FirstTeacher.description],
+                    button[onClick NextTeacher2] [Html.text "Next"]
+                ],
+                 div[id "img2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right"][img [src p2FirstTeacher.url, width "300", height "300"][]]
             ]
         ]
-
+        ]
 
 playerDemonstrate : Player -> Html msg
 playerDemonstrate model =
