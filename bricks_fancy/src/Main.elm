@@ -1,15 +1,17 @@
 module Main exposing (..)
---import Browser.Dom exposing (getViewport)
+
 import Browser
-import Browser.Events exposing (onAnimationFrameDelta,onKeyDown,onKeyUp) 
+import Browser.Dom exposing (getViewport)
+import Browser.Events exposing (onAnimationFrameDelta,onKeyDown,onKeyUp,onResize) 
 import Html.Events exposing (keyCode)
 import Json.Decode as Decode
 import Json.Encode exposing (Value)
 import Messages exposing (Msg(..))
---import Task
+import Task
 import View exposing (..)
 import Update
 import Model exposing (Model)
+import Browser.Dom exposing (getViewport)
 
 
 -- import Debug
@@ -17,7 +19,7 @@ import Model exposing (Model)
 main : Program Value Model Msg
 main =
     Browser.element
-        { init = \value -> (init, Cmd.none)
+        { init = \value -> (init, Task.perform GetViewport getViewport)
         , update = Update.update
         , view = View.view
         , subscriptions = subscriptions
@@ -32,14 +34,14 @@ subscriptions model =
         -- tell=Debug.log "p1,p2" ((not p1.lose) && (not p2.lose))
     in
     Sub.batch
-        [ if not p1.lose && not p2.lose && p1.score<1000 && p2.score < 1000 then
+        [ if (not p1.lose && not p2.lose && p1.score<1000 && p2.score < 1000) && model.start then
             onAnimationFrameDelta Tick
 
           else
             Sub.none
         , onKeyUp (Decode.map (key False) keyCode)
         , onKeyDown (Decode.map (key True) keyCode)
-        -- , onResize Resize
+        , onResize Resize
         ]
 
 

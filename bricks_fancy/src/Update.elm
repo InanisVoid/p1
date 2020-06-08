@@ -4,10 +4,28 @@ import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidt
 import Heros exposing (getPreviousTeacher,getNextTeacher,getFirstTeacher,Teacher)
 import Debug
 import Model exposing (batConfig)
+import Css exposing (true)
 -- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Start ->
+            ({model | start = True},Cmd.none)
+
+        Resize width height ->
+            ( { model | size = ( toFloat width, toFloat height ) }
+            , Cmd.none
+            )
+
+        GetViewport { viewport } ->
+            ( { model
+                | size =
+                    ( viewport.width
+                    , viewport.height
+                    )
+              }
+            , Cmd.none
+            )
 
         MoveLeft1 on ->
             let 
@@ -241,7 +259,7 @@ updateBricks otherPlayer me =
         
         teacher= getFirstTeacher me.teachers
     in
-        ({me| ball= newball, bricks=newBricks,score = (me.score + (brickScore + getClearLineBonus)*teacher.score) }, getNewOtherPlayer )
+        ({me| ball= newball, bricks=newBricks,score = toFloat (round (me.score + (brickScore + getClearLineBonus)*teacher.score)) }, getNewOtherPlayer )
 
 oneBricksCollision : Ball -> Brick -> (Brick,Model.Collisiontype) 
 oneBricksCollision ball onebrick =

@@ -1,5 +1,6 @@
 module Model exposing (..)
 import Heros exposing (Teacher) 
+import Json.Decode exposing (float)
 type alias Rec =
     { cx : Float
     , cy : Float
@@ -69,7 +70,9 @@ type alias Player =
     }
 
 type alias Model = 
-    { player1 : Player
+    { size : (Float,Float)
+    , start : Bool
+    , player1 : Player
     , player2 : Player
     }
 
@@ -79,7 +82,7 @@ brickConfig = Brick 0 0 (10/2) (4/2) recInit False
 -- batConfig : Bat
 -- batConfig = Bat (45/2) (70/2) (20/2) (2.5/2) recInit 0
 batConfig : Bat
-batConfig = Bat (45/2) (70/2) (20/2) (2.5/2) recInit 0
+batConfig = Bat (45/2) (75/2) (20/2) (2.5/2) recInit 0
 
 ballConfig: Ball
 ballConfig = Ball (25/2) (70/2) (1.5/2) recInit (1/2) (-1/2)

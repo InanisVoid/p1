@@ -1,4 +1,5 @@
 module Messages exposing (Msg(..))
+import Browser.Dom exposing (Viewport)
 type Msg
     = Tick Float
     | MoveLeft1 Bool
@@ -9,4 +10,7 @@ type Msg
     | PreviousTeacher1
     | NextTeacher2
     | PreviousTeacher2
+    | Resize Int Int
+    | GetViewport Viewport
+    | Start
     | Noop
