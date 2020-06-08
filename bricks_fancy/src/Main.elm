@@ -1,5 +1,4 @@
 module Main exposing (..)
-
 import Browser
 import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta,onKeyDown,onKeyUp,onResize) 
