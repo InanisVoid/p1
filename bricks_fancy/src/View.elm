@@ -224,7 +224,7 @@ bricks : List Brick -> List (Html msg)
 bricks bricksInput =
     let
         createBricksFormat model =
-          rect [fill "#685bd1", x <| String.fromFloat model.x, y <| String.fromFloat model.y, width <| String.fromFloat model.width, height <| String.fromFloat model.height, Svg.Attributes.stroke "#A4C0D7",Svg.Attributes.strokeWidth "0.1"] []
+           Svg.image [ xlinkHref "./images/brick.png", preserveAspectRatio "none meet", x <| String.fromFloat model.x, y <| String.fromFloat model.y, width <| String.fromFloat model.width, height <| String.fromFloat model.height, Svg.Attributes.stroke "#A4C0D7",Svg.Attributes.strokeWidth "0.1"] []
     in
         List.map createBricksFormat bricksInput
 

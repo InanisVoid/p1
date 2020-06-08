@@ -6704,15 +6704,25 @@ var $author$project$View$bat = function (batInput) {
 	};
 	return createBatFormat(batInput);
 };
+var $elm$svg$Svg$image = $elm$svg$Svg$trustedNode('image');
+var $elm$svg$Svg$Attributes$preserveAspectRatio = _VirtualDom_attribute('preserveAspectRatio');
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $elm$svg$Svg$Attributes$xlinkHref = function (value) {
+	return A3(
+		_VirtualDom_attributeNS,
+		'http://www.w3.org/1999/xlink',
+		'xlink:href',
+		_VirtualDom_noJavaScriptUri(value));
+};
 var $author$project$View$bricks = function (bricksInput) {
 	var createBricksFormat = function (model) {
 		return A2(
-			$elm$svg$Svg$rect,
+			$elm$svg$Svg$image,
 			_List_fromArray(
 				[
-					$elm$svg$Svg$Attributes$fill('#685bd1'),
+					$elm$svg$Svg$Attributes$xlinkHref('./images/brick.png'),
+					$elm$svg$Svg$Attributes$preserveAspectRatio('none meet'),
 					$elm$svg$Svg$Attributes$x(
 					$elm$core$String$fromFloat(model.x)),
 					$elm$svg$Svg$Attributes$y(

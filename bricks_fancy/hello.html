@@ -5204,17 +5204,7 @@ var $author$project$Hello$Hello$buttonCSS = _List_fromArray(
 	]);
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$iframe = _VirtualDom_node('iframe');
-var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5240,6 +5230,14 @@ var $elm$virtual_dom$VirtualDom$property = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm$html$Html$Attributes$property = $elm$virtual_dom$VirtualDom$property;
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -5262,7 +5260,7 @@ var $author$project$Hello$Hello$videoframe = function (model) {
 				_List_fromArray(
 					[
 						A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
-						A2($elm$html$Html$Attributes$style, 'font-size', '300%'),
+						A2($elm$html$Html$Attributes$style, 'font-size', '250%'),
 						A2($elm$html$Html$Attributes$style, 'text-shadow', '5px 5px 5px #FF0000'),
 						A2($elm$html$Html$Attributes$style, 'color', 'white'),
 						A2($elm$html$Html$Attributes$style, 'background-color', 'black'),
@@ -5286,25 +5284,8 @@ var $author$project$Hello$Hello$videoframe = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$id('img1'),
-								A2($elm$html$Html$Attributes$style, 'width', '40%'),
-								A2($elm$html$Html$Attributes$style, 'float', 'right'),
-								A2($elm$html$Html$Attributes$style, 'padding-left', '2%'),
-								A2($elm$html$Html$Attributes$style, 'padding-top', '2%')
+								A2($elm$html$Html$Attributes$style, 'width', '100%')
 							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$img,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$src('url(./images/Background.png)')
-									]),
-								_List_Nil)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
 								A2(
@@ -5313,7 +5294,7 @@ var $author$project$Hello$Hello$videoframe = function (model) {
 									[
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
 										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										$elm$html$Html$Attributes$src('./video/video.mp4'),
+										$elm$html$Html$Attributes$src('./video/Begin.mp4'),
 										A2(
 										$elm$html$Html$Attributes$property,
 										'frameborder',
@@ -5333,27 +5314,8 @@ var $author$project$Hello$Hello$videoframe = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('img1'),
-						A2($elm$html$Html$Attributes$style, 'width', '40%'),
-						A2($elm$html$Html$Attributes$style, 'float', 'left'),
-						A2($elm$html$Html$Attributes$style, 'padding-left', '2%'),
-						A2($elm$html$Html$Attributes$style, 'padding-top', '2%')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$src('url(./images/Background.png)')
-							]),
-						_List_Nil)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+						A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+						A2($elm$html$Html$Attributes$style, 'padding-top', '10%')
 					]),
 				_List_fromArray(
 					[

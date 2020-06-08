@@ -28,8 +28,10 @@ buttonCSS =
 
 videoframe model =
   div[Html.Attributes.style "background-color" "black"][
+    --  div [id "img1",Html.Attributes.style "width" "10%",Html.Attributes.style "float" "left",Html.Attributes.style "padding" "0"][img [src "./images/Background.png", style "height" "30%", style "width" "30%"][]],
+    --  div [id "img1",Html.Attributes.style "width" "10%",Html.Attributes.style "float" "right",Html.Attributes.style "padding" "0"][img [src "./images/Background.png",style "height" "30%", style "width" "30%" ][]],
      Html.h1 [Html.Attributes.style "text-align" "center",
-                Html.Attributes.style "font-size" "300%",
+                Html.Attributes.style "font-size" "250%",
                 Html.Attributes.style "text-shadow" "5px 5px 5px #FF0000",
                 Html.Attributes.style "color" "white",
                 Html.Attributes.style "background-color" "black"
@@ -37,11 +39,11 @@ videoframe model =
                ] 
             [Html.text "Over-Deducted"],
     div[style "text-align" "center",style "background-color" "black",Html.Attributes.style "width" "100%"][
-    div [id "img1",Html.Attributes.style "width" "40%",Html.Attributes.style "float" "right",Html.Attributes.style "padding-left" "2%",Html.Attributes.style "padding-top" "2%"][img [src "url(./images/Background.png)"][]],
-    div[][iframe
+
+    div[Html.Attributes.style "width" "100%"][iframe
     [ style "width" "100%"
     , style "height" "100%"
-    , src "./video/video.mp4"
+    , src "./video/Begin.mp4"
     , property "frameborder" (Json.Encode.string "0")
     , property "allowfullscreen" (Json.Encode.string "true")
     , style "object-fit" "fill"
@@ -49,8 +51,7 @@ videoframe model =
       Html.Attributes.style "margin" "0"
     ][]]
     ],
-    div [id "img1",Html.Attributes.style "width" "40%",Html.Attributes.style "float" "left",Html.Attributes.style "padding-left" "2%",Html.Attributes.style "padding-top" "2%"][img [src "url(./images/Background.png)" ][]],
-    div[Html.Attributes.style "text-align" "center"][button(buttonCSS ++ [onClick Start]) [Html.text "Start Game"]]
+    div[Html.Attributes.style "text-align" "center",Html.Attributes.style "padding-top" "10%"][button(buttonCSS ++ [onClick Start]) [Html.text "Start Game"]]
   ]
 
 type Msg = Start
