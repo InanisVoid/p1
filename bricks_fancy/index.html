@@ -5302,13 +5302,13 @@ var $author$project$Main$key = F2(
 	function (on, keycode) {
 		switch (keycode) {
 			case 37:
-				return $author$project$Messages$MoveLeft1(on);
-			case 39:
-				return $author$project$Messages$MoveRight1(on);
-			case 65:
 				return $author$project$Messages$MoveLeft2(on);
-			case 68:
+			case 39:
 				return $author$project$Messages$MoveRight2(on);
+			case 65:
+				return $author$project$Messages$MoveLeft1(on);
+			case 68:
+				return $author$project$Messages$MoveRight1(on);
 			default:
 				return $author$project$Messages$Noop;
 		}
@@ -6638,7 +6638,8 @@ var $elm$html$Html$img = _VirtualDom_node('img');
 var $author$project$View$nameCSS = _List_fromArray(
 	[
 		A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
-		A2($elm$html$Html$Attributes$style, 'width', '200px')
+		A2($elm$html$Html$Attributes$style, 'width', '200px'),
+		A2($elm$html$Html$Attributes$style, 'color', 'white')
 	]);
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -6669,7 +6670,7 @@ var $author$project$View$ball = function (ballInput) {
 			$elm$svg$Svg$circle,
 			_List_fromArray(
 				[
-					$elm$svg$Svg$Attributes$fill('#002c5a'),
+					$elm$svg$Svg$Attributes$fill('red'),
 					$elm$svg$Svg$Attributes$cx(
 					$elm$core$String$fromFloat(model.x)),
 					$elm$svg$Svg$Attributes$cy(
@@ -6721,7 +6722,7 @@ var $author$project$View$bricks = function (bricksInput) {
 			$elm$svg$Svg$image,
 			_List_fromArray(
 				[
-					$elm$svg$Svg$Attributes$xlinkHref('./images/brick.png'),
+					$elm$svg$Svg$Attributes$xlinkHref('./images/brickBlack.png'),
 					$elm$svg$Svg$Attributes$preserveAspectRatio('none meet'),
 					$elm$svg$Svg$Attributes$x(
 					$elm$core$String$fromFloat(model.x)),
@@ -6813,7 +6814,7 @@ var $author$project$View$canvas = function (model) {
 		$elm$html$Html$tbody,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'background-color', '#A4C0D7')
+				A2($elm$html$Html$Attributes$style, 'background-color', 'black')
 			]),
 		_List_fromArray(
 			[
@@ -6828,6 +6829,7 @@ var $author$project$View$canvas = function (model) {
 							[
 								A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
 								A2($elm$html$Html$Attributes$style, 'font-size', '300%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
 								A2($elm$html$Html$Attributes$style, 'text-shadow', '5px 5px 5px #FF0000')
 							]),
 						_List_fromArray(
@@ -6850,7 +6852,8 @@ var $author$project$View$canvas = function (model) {
 								$elm$svg$Svg$Attributes$id('score1'),
 								A2($elm$html$Html$Attributes$style, 'width', '50%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'left'),
-								A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+								A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white')
 							]),
 						_List_fromArray(
 							[
@@ -6864,7 +6867,8 @@ var $author$project$View$canvas = function (model) {
 								$elm$svg$Svg$Attributes$id('score2'),
 								A2($elm$html$Html$Attributes$style, 'width', '50%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'right'),
-								A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+								A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white')
 							]),
 						_List_fromArray(
 							[
@@ -6878,7 +6882,7 @@ var $author$project$View$canvas = function (model) {
 								$elm$svg$Svg$Attributes$id('div1'),
 								A2($elm$html$Html$Attributes$style, 'width', '45%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'left'),
-								A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/NULL.png)'),
+								A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/Background.png)'),
 								A2($elm$html$Html$Attributes$style, 'background-repeat', 'no-repeat'),
 								A2($elm$html$Html$Attributes$style, 'background-size', '100% 100%'),
 								A2($elm$html$Html$Attributes$style, '-moz-background-size', '100% 100%'),
@@ -6895,7 +6899,7 @@ var $author$project$View$canvas = function (model) {
 								$elm$svg$Svg$Attributes$id('div1'),
 								A2($elm$html$Html$Attributes$style, 'width', '45%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'left'),
-								A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/NULL.png)'),
+								A2($elm$html$Html$Attributes$style, 'background-image', 'url(./images/Background.png)'),
 								A2($elm$html$Html$Attributes$style, 'background-repeat', 'no-repeat'),
 								A2($elm$html$Html$Attributes$style, 'background-size', '100% 100%'),
 								A2($elm$html$Html$Attributes$style, '-moz-background-size', '100% 100%'),
@@ -7067,7 +7071,8 @@ var $author$project$View$canvas = function (model) {
 							[
 								A2($elm$html$Html$Attributes$style, 'width', '40%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'left'),
-								A2($elm$html$Html$Attributes$style, 'padding-left', '8%')
+								A2($elm$html$Html$Attributes$style, 'padding-left', '8%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white')
 							]),
 						_List_fromArray(
 							[
@@ -7079,7 +7084,8 @@ var $author$project$View$canvas = function (model) {
 							[
 								A2($elm$html$Html$Attributes$style, 'width', '40%'),
 								A2($elm$html$Html$Attributes$style, 'float', 'right'),
-								A2($elm$html$Html$Attributes$style, 'padding-left', '8%')
+								A2($elm$html$Html$Attributes$style, 'padding-left', '8%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white')
 							]),
 						_List_fromArray(
 							[

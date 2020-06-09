@@ -48,15 +48,16 @@ key : Bool -> Int -> Msg
 key on keycode =
     case keycode of
         37 ->
-            MoveLeft1 on
-
-        39 ->
-            MoveRight1 on
-
-        65 ->
             MoveLeft2 on
 
-        68 ->
+        39 ->
             MoveRight2 on
+            
+        65 ->
+            MoveLeft1 on
+          
+        68 ->
+            MoveRight1 on
+            
         _ ->
             Noop

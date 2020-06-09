@@ -12,6 +12,14 @@ import Heros exposing (..)
 import Messages exposing (Msg(..))
 import Html.Styled exposing (h1)
 import Css.Global exposing (body)
+import Html.Attributes exposing (preload)
+import Html.Attributes exposing (controls)
+import Css exposing (true)
+import Html.Attributes exposing (autoplay)
+import Html.Attributes exposing (loop)
+import Html.Styled.Attributes exposing (controls)
+import Html.Styled.Attributes exposing (autoplay)
+import Svg.Styled.Attributes exposing (rx)
 -- import Debug
 ballInit : Ball
 ballInit = ballRecUpdate ballConfig
@@ -126,7 +134,8 @@ startButtonCSS =
 nameCSS : List (Html.Attribute Msg)
 nameCSS =
     [   Html.Attributes.style "text-align" "center",
-        Html.Attributes.style "width" "200px"]
+        Html.Attributes.style "width" "200px",
+        Html.Attributes.style "color" "white"]
 
 
 heroCSS : List (Html.Attribute Msg)
@@ -152,22 +161,24 @@ canvas model =
        p2Teachers = p2.teachers
        p2FirstTeacher = getFirstTeacher p2Teachers
     in
-        Html.tbody[Html.Attributes.style "background-color" "#A4C0D7"][
+    --"#A4C0D7"
+        Html.tbody[Html.Attributes.style "background-color" "black"][
         div[ ]
         [   Html.h1 [Html.Attributes.style "text-align" "center",
                 Html.Attributes.style "font-size" "300%",
+                Html.Attributes.style "color" "white",
                 Html.Attributes.style "text-shadow" "5px 5px 5px #FF0000"
                ] 
             [Html.text "Over-Deducted"]],
         div [id  "wrapper"]
         [   
             -- div[][img [src "Logo.png", width "300", height "300"][]],
-            Html.h2 [id "score1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left",Html.Attributes.style "text-align" "center"][Html.text("Player1 Score: " ++  String.fromFloat p1.score)],
-            Html.h2 [id "score2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right",Html.Attributes.style "text-align" "center"][Html.text("Player2 Score: " ++  String.fromFloat p2.score)],            
+            Html.h2 [id "score1",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "left",Html.Attributes.style "text-align" "center",Html.Attributes.style "color" "white"][Html.text("Player1 Score: " ++  String.fromFloat p1.score)],
+            Html.h2 [id "score2",Html.Attributes.style "width" "50%",Html.Attributes.style "float" "right",Html.Attributes.style "text-align" "center",Html.Attributes.style "color" "white"][Html.text("Player2 Score: " ++  String.fromFloat p2.score)],            
             div [
                 id "div1",Html.Attributes.style "width" "45%",
                 Html.Attributes.style "float" "left" ,
-                Html.Attributes.style "background-image" "url(./images/NULL.png)",
+                Html.Attributes.style "background-image" "url(./images/Background.png)",
                 Html.Attributes.style "background-repeat" "no-repeat",
                 Html.Attributes.style "background-size" "100% 100%",
                 Html.Attributes.style "-moz-background-size" "100% 100%",
@@ -176,7 +187,7 @@ canvas model =
            div [
                 id "div1",Html.Attributes.style "width" "45%",
                 Html.Attributes.style "float" "left" ,
-                Html.Attributes.style "background-image" "url(./images/NULL.png)",
+                Html.Attributes.style "background-image" "url(./images/Background.png)",
                 Html.Attributes.style "background-repeat" "no-repeat",
                 Html.Attributes.style "background-size" "100% 100%",
                 Html.Attributes.style "-moz-background-size" "100% 100%",
@@ -200,9 +211,10 @@ canvas model =
                 ],
                  div[id "img2",Html.Attributes.style "width" "40%",Html.Attributes.style "float" "right",Html.Attributes.style "padding-left" "2%",Html.Attributes.style "padding-top" "2%"][img (List.append [src p2FirstTeacher.url] heroCSS) []]
             ],
-            h3 [Html.Attributes.style "width" "40%",Html.Attributes.style "float" "left",Html.Attributes.style "padding-left" "8%"] [Html.text p1FirstTeacher.description],
-            h3 [Html.Attributes.style "width" "40%",Html.Attributes.style "float" "right",Html.Attributes.style "padding-left" "8%"] [Html.text p2FirstTeacher.description],
+            h3 [Html.Attributes.style "width" "40%",Html.Attributes.style "float" "left",Html.Attributes.style "padding-left" "8%",Html.Attributes.style "color" "white"] [Html.text p1FirstTeacher.description],
+            h3 [Html.Attributes.style "width" "40%",Html.Attributes.style "float" "right",Html.Attributes.style "padding-left" "8%",Html.Attributes.style "color" "white"] [Html.text p2FirstTeacher.description],
             div [id "startbutton", Html.Attributes.style "text-align" "center", Html.Attributes.style "padding-top" "50%"][  button(startButtonCSS ++ [onClick Start]) [Html.text "Start"]]
+            -- audio [ Html.Attributes.controls True, Html.Attributes.autoplay True, loop True ,src "./audio/success.mp3"][]
         ]
         ]
 
@@ -224,7 +236,7 @@ bricks : List Brick -> List (Html msg)
 bricks bricksInput =
     let
         createBricksFormat model =
-           Svg.image [ xlinkHref "./images/brick.png", preserveAspectRatio "none meet", x <| String.fromFloat model.x, y <| String.fromFloat model.y, width <| String.fromFloat model.width, height <| String.fromFloat model.height, Svg.Attributes.stroke "#A4C0D7",Svg.Attributes.strokeWidth "0.1"] []
+           Svg.image [ xlinkHref "./images/brickBlack.png", preserveAspectRatio "none meet",  x <| String.fromFloat model.x, y <| String.fromFloat model.y, width <| String.fromFloat model.width, height <| String.fromFloat model.height, Svg.Attributes.stroke "#A4C0D7",Svg.Attributes.strokeWidth "0.1"] []
     in
         List.map createBricksFormat bricksInput
 
@@ -232,7 +244,8 @@ ball : Ball -> Html msg
 ball ballInput =
     let 
         createBallFormat model =
-          circle [fill "#002c5a", cx <| String.fromFloat model.x, cy <| String.fromFloat model.y, r <| String.fromFloat model.r][]
+        --"#002c5a"
+          circle [fill "red", cx <| String.fromFloat model.x, cy <| String.fromFloat model.y, r <| String.fromFloat model.r][]
     in
         createBallFormat ballInput
 
