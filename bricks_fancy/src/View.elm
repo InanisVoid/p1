@@ -21,18 +21,7 @@ import Svg.Styled.Attributes exposing (..)
 
 
 -- import Debug
-ballInit : Ball
-ballInit = ballRecUpdate ballConfig
-batInit : Bat
-batInit =batRecUpdate batConfig
-brickListInit : List Brick
-brickListInit = generateBricks [] total brickConfig.x brickConfig.y 
 
-initPlayer : Player
-initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0
-
-init : Model 
-init = Model (0,0) False initPlayer initPlayer
 
 --type Msg = Increment | Decrement
 
@@ -160,6 +149,21 @@ canvas model =
        p2=model.player2
        p2Teachers = p2.teachers
        p2FirstTeacher = getFirstTeacher p2Teachers
+
+       getstatusmessage = 
+         case model.status of 
+            NotStarted ->
+                Start
+            _ ->
+                Reset
+
+       getstatustext = 
+         case model.status of 
+            NotStarted ->
+                "Start"
+            _ ->
+                "Reset"
+
     in
     --"#A4C0D7"
         Html.Styled.nav[
@@ -212,7 +216,7 @@ canvas model =
             ],
             div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "padding-left" "8%"][styleText [] [Html.Styled.text p1FirstTeacher.description]],
             div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "12%"][styleText [] [Html.Styled.text p2FirstTeacher.description]],
-            Html.Styled.div [Html.Styled.Attributes.style "text-align" "center", Html.Styled.Attributes.style "padding-top" "75%"][ styleButton[Html.Styled.Attributes.style "width" "200%",onClick Start][Html.Styled.text "Start"]]
+            Html.Styled.div [Html.Styled.Attributes.style "text-align" "center", Html.Styled.Attributes.style "padding-top" "75%"][ styleButton[Html.Styled.Attributes.style "width" "200%",onClick getstatusmessage][Html.Styled.text getstatustext]]
             -- audio [ Html.Attributes.controls True, Html.Attributes.autoplay True, loop True ,src "./audio/success.mp3"][]
         ]
         ]

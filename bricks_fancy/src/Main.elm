@@ -9,12 +9,13 @@ import Messages exposing (Msg(..))
 import Task
 import View exposing (..)
 import Update
-import Model exposing (Model)
+import Model exposing (Model,init)
 
 
 
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
+import Model exposing (Status(..))
 
 
 
@@ -39,7 +40,7 @@ subscriptions model =
         -- tell=Debug.log "p1,p2" ((not p1.lose) && (not p2.lose))
     in
     Sub.batch
-        [ if (not p1.lose && not p2.lose && p1.score<1000 && p2.score < 1000) && model.start then
+        [ if (not p1.lose && not p2.lose && p1.score<1000 && p2.score < 1000) && (model.status == Model.Playing )then
             onAnimationFrameDelta Tick
 
           else

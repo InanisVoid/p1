@@ -5205,9 +5205,10 @@ var $elm$core$Task$perform = F2(
 var $elm$browser$Browser$element = _Browser_element;
 var $elm$browser$Browser$Dom$getViewport = _Browser_withWindow(_Browser_getViewport);
 var $author$project$Model$Model = F4(
-	function (size, start, player1, player2) {
-		return {player1: player1, player2: player2, size: size, start: start};
+	function (size, player1, player2, status) {
+		return {player1: player1, player2: player2, size: size, status: status};
 	});
+var $author$project$Model$NotStarted = {$: 'NotStarted'};
 var $author$project$Model$Player = F9(
 	function (ball, bat, bricks, moveLeft, moveRight, lose, direction, teachers, score) {
 		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight, score: score, teachers: teachers};
@@ -5231,7 +5232,7 @@ var $author$project$Model$ballRecUpdate = function (model) {
 		model,
 		{edge: newRec});
 };
-var $author$project$View$ballInit = $author$project$Model$ballRecUpdate($author$project$Model$ballConfig);
+var $author$project$Model$ballInit = $author$project$Model$ballRecUpdate($author$project$Model$ballConfig);
 var $author$project$Model$Bat = F6(
 	function (x, y, width, height, edge, xSpeed) {
 		return {edge: edge, height: height, width: width, x: x, xSpeed: xSpeed, y: y};
@@ -5247,7 +5248,7 @@ var $author$project$Model$batRecUpdate = function (model) {
 		model,
 		{edge: newRec});
 };
-var $author$project$View$batInit = $author$project$Model$batRecUpdate($author$project$Model$batConfig);
+var $author$project$Model$batInit = $author$project$Model$batRecUpdate($author$project$Model$batConfig);
 var $author$project$Model$Brick = F6(
 	function (x, y, width, height, edge, collision) {
 		return {collision: collision, edge: edge, height: height, width: width, x: x, y: y};
@@ -5301,24 +5302,25 @@ var $author$project$Model$generateBricks = F4(
 		}
 	});
 var $author$project$Model$total = 50;
-var $author$project$View$brickListInit = A4($author$project$Model$generateBricks, _List_Nil, $author$project$Model$total, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
+var $author$project$Model$brickListInit = A4($author$project$Model$generateBricks, _List_Nil, $author$project$Model$total, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
 var $author$project$Heros$Teacher = F7(
 	function (ballSpeed, batSpeed, batWidth, score, name, description, url) {
 		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score, url: url};
 	});
-var $author$project$Heros$hSS = A7($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2', './images/HSS.png');
-var $author$project$Heros$mK = A7($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2', './images/MK.png');
-var $author$project$Heros$mN = A7($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2', './images/MN.png');
-var $author$project$Heros$zQ = A7($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2', './images/ZQ.png');
+var $author$project$Heros$hSS = A7($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2', './images/HSS.jpg');
+var $author$project$Heros$mK = A7($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2', './images/MK.jpg');
+var $author$project$Heros$mN = A7($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2', './images/MN.jpg');
+var $author$project$Heros$zQ = A7($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2', './images/ZQ.jpg');
 var $author$project$Heros$teachers = _List_fromArray(
 	[$author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ, $author$project$Heros$hSS]);
-var $author$project$View$initPlayer = A9($author$project$Model$Player, $author$project$View$ballInit, $author$project$View$batInit, $author$project$View$brickListInit, false, false, false, 0, $author$project$Heros$teachers, 0);
-var $author$project$View$init = A4(
+var $author$project$Model$initPlayer = A9($author$project$Model$Player, $author$project$Model$ballInit, $author$project$Model$batInit, $author$project$Model$brickListInit, false, false, false, 0, $author$project$Heros$teachers, 0);
+var $author$project$Model$init = A4(
 	$author$project$Model$Model,
 	_Utils_Tuple2(0, 0),
-	false,
-	$author$project$View$initPlayer,
-	$author$project$View$initPlayer);
+	$author$project$Model$initPlayer,
+	$author$project$Model$initPlayer,
+	$author$project$Model$NotStarted);
+var $author$project$Model$Playing = {$: 'Playing'};
 var $author$project$Messages$Resize = F2(
 	function (a, b) {
 		return {$: 'Resize', a: a, b: b};
@@ -5915,7 +5917,7 @@ var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				(((!p1.lose) && ((!p2.lose) && ((p1.score < 1000) && (p2.score < 1000)))) && model.start) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
+				(((!p1.lose) && ((!p2.lose) && ((p1.score < 1000) && (p2.score < 1000)))) && _Utils_eq(model.status, $author$project$Model$Playing)) ? $elm$browser$Browser$Events$onAnimationFrameDelta($author$project$Messages$Tick) : $elm$core$Platform$Sub$none,
 				$elm$browser$Browser$Events$onKeyUp(
 				A2(
 					$elm$json$Json$Decode$map,
@@ -8539,7 +8541,13 @@ var $author$project$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{start: true}),
+						{status: $author$project$Model$Playing}),
+					$elm$core$Platform$Cmd$none);
+			case 'Reset':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player1: $author$project$Model$initPlayer, player2: $author$project$Model$initPlayer}),
 					$elm$core$Platform$Cmd$none);
 			case 'Resize':
 				var width = msg.a;
@@ -8672,6 +8680,7 @@ var $author$project$Messages$NextTeacher1 = {$: 'NextTeacher1'};
 var $author$project$Messages$NextTeacher2 = {$: 'NextTeacher2'};
 var $author$project$Messages$PreviousTeacher1 = {$: 'PreviousTeacher1'};
 var $author$project$Messages$PreviousTeacher2 = {$: 'PreviousTeacher2'};
+var $author$project$Messages$Reset = {$: 'Reset'};
 var $author$project$Messages$Start = {$: 'Start'};
 var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
 	function (a, b, c) {
@@ -10309,6 +10318,22 @@ var $author$project$View$canvas = function (model) {
 	var p1 = model.player1;
 	var p1Teachers = p1.teachers;
 	var p1FirstTeacher = $author$project$Heros$getFirstTeacher(p1Teachers);
+	var getstatustext = function () {
+		var _v1 = model.status;
+		if (_v1.$ === 'NotStarted') {
+			return 'Start';
+		} else {
+			return 'Reset';
+		}
+	}();
+	var getstatusmessage = function () {
+		var _v0 = model.status;
+		if (_v0.$ === 'NotStarted') {
+			return $author$project$Messages$Start;
+		} else {
+			return $author$project$Messages$Reset;
+		}
+	}();
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$nav,
 		_List_fromArray(
@@ -10580,11 +10605,11 @@ var $author$project$View$canvas = function (model) {
 								_List_fromArray(
 									[
 										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'width', '200%'),
-										$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Messages$Start)
+										$rtfeldman$elm_css$Html$Styled$Events$onClick(getstatusmessage)
 									]),
 								_List_fromArray(
 									[
-										$rtfeldman$elm_css$Html$Styled$text('Start')
+										$rtfeldman$elm_css$Html$Styled$text(getstatustext)
 									]))
 							]))
 					]))
@@ -10650,7 +10675,7 @@ var $author$project$Main$main = $elm$browser$Browser$element(
 	{
 		init: function (value) {
 			return _Utils_Tuple2(
-				$author$project$View$init,
+				$author$project$Model$init,
 				A2($elm$core$Task$perform, $author$project$Messages$GetViewport, $elm$browser$Browser$Dom$getViewport));
 		},
 		subscriptions: $author$project$Main$subscriptions,

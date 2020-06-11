@@ -13,4 +13,5 @@ type Msg
     | Resize Int Int
     | GetViewport Viewport
     | Start
+    | Reset
     | Noop

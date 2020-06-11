@@ -16,16 +16,16 @@ teacherConfig : Teacher
 teacherConfig = Teacher 1 1 1 1 "" "" ""
 
 mN : Teacher
-mN = Teacher 1 1 1 1.2 "MN" "Score*1.2" "./images/MN.png"
+mN = Teacher 1 1 1 1.2 "MN" "Score*1.2" "./images/MN.jpg"
 
 mK : Teacher
-mK = Teacher 1 1 1.2 1 "MK" "BatLength*1.2" "./images/MK.png"
+mK = Teacher 1 1 1.2 1 "MK" "BatLength*1.2" "./images/MK.jpg"
 
 zQ : Teacher
-zQ = Teacher 1 1.2 1 1 "ZQ" "BatSpeed*1.2" "./images/ZQ.png"
+zQ = Teacher 1 1.2 1 1 "ZQ" "BatSpeed*1.2" "./images/ZQ.jpg"
 
 hSS : Teacher
-hSS = Teacher 1.2 1 1 1 "HSS" "BallSpeed*1.2" "./images/HSS.png"
+hSS = Teacher 1.2 1 1 1 "HSS" "BallSpeed*1.2" "./images/HSS.jpg"
 
 teachers : List Teacher
 teachers = [mN,mK,zQ,hSS]

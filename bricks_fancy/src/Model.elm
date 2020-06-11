@@ -1,5 +1,8 @@
 module Model exposing (..)
-import Heros exposing (Teacher) 
+import Heros exposing (..)
+--import Heros exposing (Teacher) 
+
+
 import Json.Decode exposing (float)
 type alias Rec =
     { cx : Float
@@ -12,7 +15,10 @@ type Collisiontype
     = Horizon
     | Vertical
     | Nocollision
-    
+
+type Status 
+    = NotStarted
+    | Playing
     
 recCollisionTest : Rec -> Rec -> Collisiontype
 recCollisionTest rec1 rec2 =
@@ -71,9 +77,10 @@ type alias Player =
 
 type alias Model = 
     { size : (Float,Float)
-    , start : Bool
+    -- , start : Bool
     , player1 : Player
     , player2 : Player
+    , status : Status
     }
 
 brickConfig : Brick
@@ -156,3 +163,17 @@ generateBricks bricklist number x y =
             bricklist
         else
             generateBricks (  genearateOneBrick x y :: bricklist ) (number - 1) (nextx x) ytemp 
+
+
+ballInit : Ball
+ballInit = ballRecUpdate ballConfig
+batInit : Bat
+batInit =batRecUpdate batConfig
+brickListInit : List Brick
+brickListInit = generateBricks [] total brickConfig.x brickConfig.y 
+
+initPlayer : Player
+initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0
+
+init : Model 
+init = Model (0,0) initPlayer initPlayer NotStarted

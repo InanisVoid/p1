@@ -1,16 +1,21 @@
 module Update exposing (update)
 import Messages exposing (Msg(..))
-import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate,brickConfig,generateBricks,brickRecUpdate)
+import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate,brickConfig,generateBricks,brickRecUpdate,init)
 import Heros exposing (getPreviousTeacher,getNextTeacher,getFirstTeacher,Teacher)
 import Debug
-import Model exposing (batConfig)
+import Model exposing (batConfig,initPlayer)
 import Css exposing (true)
+import Model exposing (Status(..))
+--import View exposing (init)
 -- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ({model | start = True},Cmd.none)
+            ({model | status=Playing},Cmd.none)
+        
+        Reset ->
+            ({model | player1=initPlayer,player2=initPlayer},Cmd.none)
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }

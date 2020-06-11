@@ -6,7 +6,7 @@ import VirtualDom
 import Css.Transitions exposing (background3,border3,bottom3,boxShadow3,easeInOut,ease,transition,cubicBezier,top3,transition)
 import Css.Animations exposing (backgroundColor,keyframes)
 import Css.Global exposing (global)
-import Element.Font exposing (center)
+-- import Element.Font exposing (center)
 -- import Internal.Model exposing (unstyled)
 -- import DEPRECATED.Css.File exposing (CssFileStructure)
 -- import Element exposing (px)
