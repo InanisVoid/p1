@@ -4,23 +4,29 @@ import Browser.Dom exposing (getViewport)
 import Browser.Events exposing (onAnimationFrameDelta,onKeyDown,onKeyUp,onResize) 
 import Html.Events exposing (keyCode)
 import Json.Decode as Decode
-import Json.Encode exposing (Value)
+import Json.Encode exposing (..)
 import Messages exposing (Msg(..))
 import Task
 import View exposing (..)
 import Update
 import Model exposing (Model)
-import Browser.Dom exposing (getViewport)
+
+
+
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (..)
+
 
 
 -- import Debug
 -- import Model exposing (Model)
-main : Program Value Model Msg
+main : Program Json.Encode.Value Model Msg
 main =
     Browser.element
-        { init = \value -> (init, Task.perform GetViewport getViewport)
+        { view =  View.view >> toUnstyled
+        , init = \value -> (init, Task.perform GetViewport getViewport)
         , update = Update.update
-        , view = View.view
+        
         , subscriptions = subscriptions
         }
 
