@@ -8148,6 +8148,7 @@ var $author$project$Update$checkLose = function (model) {
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$core$Debug$log = _Debug_log;
 var $author$project$Model$Horizon = {$: 'Horizon'};
 var $author$project$Model$Nocollision = {$: 'Nocollision'};
 var $author$project$Model$Vertical = {$: 'Vertical'};
@@ -8176,12 +8177,14 @@ var $author$project$Update$batCollision = F2(
 	function (bat, ball) {
 		var changeSpeed = F3(
 			function (speed, rec1, rec2) {
+				var changeByBat = (bat.xSpeed > 0) ? ((bat.xSpeed - 1) / 2) : ((!bat.xSpeed) ? 0 : ((bat.xSpeed + 1) / 2));
+				var d2 = A2($elm$core$Debug$log, 'batChangeSpeed', changeByBat);
 				var _v0 = A2($author$project$Model$recCollisionTest, rec1, rec2);
 				switch (_v0.$) {
 					case 'Horizon':
-						return _Utils_Tuple2(speed.a, -speed.b);
+						return _Utils_Tuple2(speed.a + changeByBat, -speed.b);
 					case 'Vertical':
-						return _Utils_Tuple2(speed.a, -speed.b);
+						return _Utils_Tuple2(speed.a + changeByBat, -speed.b);
 					default:
 						return speed;
 				}
@@ -8191,6 +8194,8 @@ var $author$project$Update$batCollision = F2(
 			_Utils_Tuple2(ball.xSpeed, ball.ySpeed),
 			bat.edge,
 			ball.edge);
+		var d = A2($elm$core$Debug$log, 'ballNewSpeed', newSpeed);
+		var d1 = A2($elm$core$Debug$log, 'ballOrignialSpeed', newSpeed);
 		return _Utils_update(
 			ball,
 			{xSpeed: newSpeed.a, ySpeed: newSpeed.b});
@@ -8240,7 +8245,7 @@ var $author$project$Update$updateBall = function (model) {
 var $author$project$Update$generateNewBat = F3(
 	function (teacher, direction, model) {
 		var dt = teacher.batSpeed;
-		var xSpeed = dt * direction;
+		var xSpeed = (dt * direction) * 1.005;
 		var xNew = model.x + xSpeed;
 		var batTemp = A6($author$project$Model$Bat, xNew, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, xSpeed);
 		return $author$project$Model$batRecUpdate(batTemp);
@@ -8493,13 +8498,17 @@ var $author$project$Update$animate = function (model) {
 	}
 };
 var $author$project$Update$checkDirection = function (model) {
+	var batTemp = model.bat;
+	var batSpeedReset = _Utils_update(
+		batTemp,
+		{xSpeed: $author$project$Model$batConfig.xSpeed});
 	return model.moveLeft ? _Utils_update(
 		model,
-		{direction: -1}) : (model.moveRight ? _Utils_update(
+		{bat: batSpeedReset, direction: -1}) : (model.moveRight ? _Utils_update(
 		model,
-		{direction: 1}) : _Utils_update(
+		{bat: batSpeedReset, direction: 1}) : _Utils_update(
 		model,
-		{direction: 0}));
+		{bat: batSpeedReset, direction: 0}));
 };
 var $elm$core$List$drop = F2(
 	function (n, list) {

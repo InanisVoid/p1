@@ -112,12 +112,16 @@ update msg model =
 
 checkDirection : Player -> Player
 checkDirection model =
-    if model.moveLeft then
-            {model | direction = -1}
-    else if model.moveRight then
-            {model | direction = 1}
-        else
-            {model | direction = 0}
+    let 
+        batTemp=model.bat
+        batSpeedReset ={batTemp|xSpeed=batConfig.xSpeed}
+    in
+        if model.moveLeft then
+                {model | direction = -1,bat=batSpeedReset}
+        else if model.moveRight then
+                {model | direction = 1,bat=batSpeedReset}
+            else
+                {model | direction = 0,bat=batSpeedReset}
 
 
 -- startMove : Model -> Model
@@ -169,7 +173,7 @@ generateNewBat : Teacher-> Float -> Bat -> Bat
 generateNewBat teacher direction model =
     let
         dt = teacher.batSpeed
-        xSpeed = dt*direction
+        xSpeed = dt*direction*1.005
         xNew =  model.x + xSpeed
         batTemp = Bat xNew model.y (batConfig.width*teacher.batWidth) model.height recInit xSpeed
         -- d = Debug.log "bat" (batRecUpdate batTemp)
@@ -216,17 +220,33 @@ batCollision : Bat -> Ball -> Ball
 batCollision bat ball=
     let
         changeSpeed speed rec1 rec2= 
+            let
+                changeByBat =
+                    if bat.xSpeed > 0 then
+                        (bat.xSpeed - 1)/2
+                    else
+                        if bat.xSpeed == 0 then 
+                            0
+                        else
+                            (bat.xSpeed + 1)/2
+                
+                -- d2=Debug.log "batChangeSpeed" changeByBat
+            in 
+            
             case recCollisionTest rec1 rec2 of
                 Model.Horizon -> 
-                    ((Tuple.first speed),-(Tuple.second speed))
+                    (((Tuple.first speed) + changeByBat) ,-(Tuple.second speed))
 
                 Model.Vertical ->
-                    ((Tuple.first speed),-(Tuple.second speed))
+                    (((Tuple.first speed) + changeByBat),-(Tuple.second speed))
                 
                 Model.Nocollision ->speed
             
-                
+        -- d1=Debug.log "ballOrignialSpeed" newSpeed        
+        
         newSpeed = changeSpeed (ball.xSpeed,ball.ySpeed) bat.edge ball.edge
+        
+        -- d=Debug.log "ballNewSpeed" newSpeed
     in
         {ball |  xSpeed=(Tuple.first newSpeed), ySpeed=(Tuple.second newSpeed) }
 
