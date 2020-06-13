@@ -6,7 +6,7 @@ import Messages exposing (Msg(..))
 import Style.Button exposing (styleButton)
 import Style.Title exposing (styleTitle)
 import Style.Text exposing (styleText)
-
+import Style.Card exposing (styledCard,styledCardFront,styledCardBack)
 
 import Css exposing (..)
 import Html
@@ -68,6 +68,7 @@ view model =
         , Html.Styled.Attributes.style "position" "absolute"
         , Html.Styled.Attributes.style "left" "0"
         , Html.Styled.Attributes.style "top" "0"
+        , Html.Styled.Attributes.style "background" "linear-gradient(135deg, rgba(206,188,155,1) 0%, rgba(85,63,50,1) 51%, rgba(42,31,25,1) 100%)"
         ]
         [ Html.Styled.div
             [ Html.Styled.Attributes.style "width" (String.fromFloat pixelWidth ++ "px")
@@ -171,7 +172,10 @@ canvas model =
                         Html.Styled.Attributes.style "background-image" "url(./images/Background.jpg)",
                         Html.Styled.Attributes.style "background-repeat" "no-repeat",
                         Html.Styled.Attributes.style "background-size" "100% 100%",
-                        Html.Styled.Attributes.style "-moz-background-size" "100% 100%"
+                        Html.Styled.Attributes.style "-moz-background-size" "100% 100%",
+                        Html.Styled.Attributes.style "border-color" "silver",
+                        Html.Styled.Attributes.style "border-width" "15px",
+                        Html.Styled.Attributes.style "border-style" "outset"
         ][
         styleTitle[ Html.Styled.Attributes.style "width" "100%",Html.Styled.Attributes.style "font-size" "300%"][Html.Styled.text "Over-Deducted"],
         Html.Styled.div []
@@ -197,27 +201,82 @@ canvas model =
                 -- Html.Styled.Attributes.style "-moz-background-size" "100% 100%",
                 Html.Styled.Attributes.style "margin" "2.5%"
                 ][playerDemonstrate model.player2],
-            Html.Styled.div[Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "padding-right" "2%",Html.Styled.Attributes.style "padding-left" "8%"][
-                Html.Styled.div [Html.Styled.Attributes.style "width" "50%",Html.Styled.Attributes.style "float" "left"][
-                    styleButton[onClick PreviousTeacher1][Html.Styled.text "Previous"],
-                    styleText[]  [Html.Styled.text p1FirstTeacher.name],
-                    styleButton[onClick NextTeacher1][Html.Styled.text "Next"]
+            
+
+            --Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "padding-right" "2%",Html.Styled.Attributes.style "padding-left" "8%"
+
+            styledCard[    Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",
+                            Html.Styled.Attributes.style "top" "440px",Html.Styled.Attributes.style "left" "10px",Html.Styled.Attributes.style "border" "inset silver 10px"][
+               styledCardFront[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px"][
+                    Html.Styled.div [Html.Styled.Attributes.style "padding-top" "10%",Html.Styled.Attributes.style "padding-left" "10%",Html.Styled.Attributes.style "float" "left"][img (List.append [src p1FirstTeacher.url] heroCSS)[]],
                     
+                    styleText [ 
+                                Html.Styled.Attributes.style "margin-top" "10%",
+                                Html.Styled.Attributes.style "margin-bottom" "10%",
+                                Html.Styled.Attributes.style "margin-right" "10%",
+                                Html.Styled.Attributes.style "width" "120px",
+                                Html.Styled.Attributes.style "height" "135px",
+                                Html.Styled.Attributes.style "text-align" "center",
+                                Html.Styled.Attributes.style "float" "right"] [Html.Styled.text p1FirstTeacher.description],
+
+                    styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
+                                Html.Styled.Attributes.style "margin-left" "10%",
+                                Html.Styled.Attributes.style "height" "15%",
+                                Html.Styled.Attributes.style "width" "100px",
+                                Html.Styled.Attributes.style "float" "left"]  [Html.Styled.text p1FirstTeacher.name]
                 ],
-                Html.Styled.div [Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-left" "2%",Html.Styled.Attributes.style "padding-top" "2%"][img (List.append [src p1FirstTeacher.url] heroCSS)[]]
+                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] [ Html.Styled.text "Background (not available now)" ]
             ],
-            Html.Styled.div[Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "2%",Html.Styled.Attributes.style "padding-left" "8%"][
-                Html.Styled.div [Html.Styled.Attributes.style "width" "50%",Html.Styled.Attributes.style "float" "left"][
-                    styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],
-                    styleText[][Html.Styled.text p2FirstTeacher.name],                    
-                    styleButton [onClick NextTeacher2][Html.Styled.text "Next"]
+            
+            Html.Styled.div[Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "margin-left" "35%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
+                styleButton[onClick PreviousTeacher1][Html.Styled.text "Previous"],                
+                styleButton[onClick NextTeacher1,Html.Styled.Attributes.style "margin-top" "90px"][Html.Styled.text "Next"]
+            ],
+            
+            
+            styledCard[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",
+                            Html.Styled.Attributes.style "top" "220px",Html.Styled.Attributes.style "left" "520px",Html.Styled.Attributes.style "border" "inset silver 10px"][
+               styledCardFront[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px"][
+                    Html.Styled.div [Html.Styled.Attributes.style "padding-top" "10%",Html.Styled.Attributes.style "padding-left" "10%",Html.Styled.Attributes.style "float" "left"][img (List.append [src p2FirstTeacher.url] heroCSS)[]],
+                    
+                    styleText [ 
+                                Html.Styled.Attributes.style "margin-top" "10%",
+                                Html.Styled.Attributes.style "margin-bottom" "10%",
+                                Html.Styled.Attributes.style "margin-right" "10%",
+                                Html.Styled.Attributes.style "width" "120px",
+                                Html.Styled.Attributes.style "height" "135px",
+                                Html.Styled.Attributes.style "text-align" "center",
+                                Html.Styled.Attributes.style "float" "right"] [Html.Styled.text p2FirstTeacher.description],
+
+                    styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
+                                Html.Styled.Attributes.style "margin-left" "10%",
+                                Html.Styled.Attributes.style "height" "15%",
+                                Html.Styled.Attributes.style "width" "100px",
+                                Html.Styled.Attributes.style "float" "left"]  [Html.Styled.text p2FirstTeacher.name]
                 ],
-                 Html.Styled.div[Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-left" "2%",Html.Styled.Attributes.style "padding-top" "2%"][img (List.append [src p2FirstTeacher.url] heroCSS) []]
+                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] [ Html.Styled.text "Background (not available now)" ]
             ],
-            div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "padding-left" "8%"][styleText [] [Html.Styled.text p1FirstTeacher.description]],
-            div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "12%"][styleText [] [Html.Styled.text p2FirstTeacher.description]],
-            Html.Styled.div [Html.Styled.Attributes.style "text-align" "center", Html.Styled.Attributes.style "padding-top" "75%"][ styleButton[Html.Styled.Attributes.style "width" "200%",onClick getstatusmessage][Html.Styled.text getstatustext]]
-            -- audio [ Html.Attributes.controls True, Html.Attributes.autoplay True, loop True ,src "./audio/success.mp3"][]
+            
+            Html.Styled.div[Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "margin-right" "7%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
+                styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],                
+                styleButton[onClick NextTeacher2,Html.Styled.Attributes.style "margin-top" "90px"][Html.Styled.text "Next"]
+            ],
+
+
+
+            -- Html.Styled.div[Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "2%",Html.Styled.Attributes.style "padding-left" "8%"][
+            --     Html.Styled.div [Html.Styled.Attributes.style "width" "50%",Html.Styled.Attributes.style "float" "left"][
+            --         styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],
+            --         styleText[][Html.Styled.text p2FirstTeacher.name],                    
+            --         styleButton [onClick NextTeacher2][Html.Styled.text "Next"]
+            --     ],
+            --      Html.Styled.div[Html.Styled.Attributes.style "width" "40%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-left" "2%",Html.Styled.Attributes.style "padding-top" "2%"][img (List.append [src p2FirstTeacher.url] heroCSS) []]
+            -- ],
+            
+
+            -- div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "12%"][styleText [] [Html.Styled.text p2FirstTeacher.description]],
+            Html.Styled.div [Html.Styled.Attributes.style "text-align" "center", Html.Styled.Attributes.style "margin-top" "30%"][ styleButton[Html.Styled.Attributes.style "width" "200%",onClick getstatusmessage][Html.Styled.text getstatustext]]
+            -- -- audio [ Html.Attributes.controls True, Html.Attributes.autoplay True, loop True ,src "./audio/success.mp3"][]
         ]
         ]
 
