@@ -6,6 +6,7 @@ import Debug
 import Model exposing (batConfig,initPlayer)
 import Css exposing (true)
 import Model exposing (Status(..))
+import Random
 --import View exposing (init)
 -- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -15,7 +16,7 @@ update msg model =
             ({model | status=Playing},Cmd.none)
         
         Reset ->
-            ({model | player1=initPlayer,player2=initPlayer},Cmd.none)
+            ({model | player1=initPlayer,player2=initPlayer,status=NotStarted},Cmd.none)
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
@@ -109,6 +110,18 @@ update msg model =
         Noop ->
             ( model , Cmd.none )
 
+        Changeidentity no ->
+            let
+                ptemp = 
+                    if (no == 1) then 
+                        model.player1
+                    else model.player2
+                p = {ptemp| isAI = not ptemp.isAI}
+            in
+                if (no == 1) then 
+                    ({model| player1 = p},Cmd.none)
+                else 
+                    ({model|player2 = p},Cmd.none)
 
 checkDirection : Player -> Player
 checkDirection model =
@@ -160,25 +173,52 @@ checkLose model =
                 True
             else
                 False
+        checkbrick brick =
+            if List.member 36 (List.map (\value->(round value.y) ) brick) then
+                True
+            else
+                False
+
     in
-        { model | lose = checkball model.ball }
+        { model | lose = (checkball model.ball) || (checkbrick model.bricks) }
 
 
 -- Bat
 updateBat : Player -> Player
 updateBat  model=
-    { model | bat = generateNewBat (getFirstTeacher model.teachers) model.direction model.bat }
+    let 
+        ballx = model.ball.x
+        batx = model.bat.x+0.5* model.bat.width
+        direction = 
+            if (model.isAI) then
+                if (ballx>batx) then
+                    1
+                else if (ballx<batx) then
+                    -1
+                else 
+                    0
+
+            else 
+                model.direction
+    in
+        { model | bat = generateNewBat (getFirstTeacher model.teachers) direction model.bat }
 
 generateNewBat : Teacher-> Float -> Bat -> Bat 
 generateNewBat teacher direction model =
     let
         dt = teacher.batSpeed
         xSpeed = dt*direction*1.005
-        xNew =  model.x + xSpeed
-        batTemp = Bat xNew model.y (batConfig.width*teacher.batWidth) model.height recInit xSpeed
+        
+        getbatTemp =
+            if (model.x + xSpeed + batConfig.width*teacher.batWidth) > canvasWidth then 
+                Bat (canvasWidth - batConfig.width*teacher.batWidth) model.y (batConfig.width*teacher.batWidth) model.height recInit 0   
+            else if (model.x + xSpeed) < 0 then 
+                Bat 0 model.y (batConfig.width*teacher.batWidth) model.height recInit 0   
+            else
+                Bat (model.x + xSpeed) model.y (batConfig.width*teacher.batWidth) model.height recInit xSpeed
         -- d = Debug.log "bat" (batRecUpdate batTemp)
     in
-        batRecUpdate batTemp
+        batRecUpdate getbatTemp
 
 
 
@@ -371,9 +411,10 @@ updateOriginalBricks model =
 addNewBricks : List Brick -> List Brick
 addNewBricks model =
     let 
-        number = 10
+        number = 5
+        seedBrick = Maybe.withDefault brickConfig (List.head <| List.reverse model)
     in
-        generateBricks model number brickConfig.x brickConfig.y
+        generateBricks model number brickConfig.x brickConfig.y seedBrick.seed
 
 
 clearBrickScore : Float -> Float -> Float
@@ -386,13 +427,13 @@ clearBrickScore  model scorenow =
     case (round model) of 
         0 ->
             scorenow + 10
-        2 ->
-            scorenow + 8
         4 ->
-            scorenow + 6
-        6 ->
-            scorenow + 4
+            scorenow + 8
         8 ->
+            scorenow + 6
+        12 ->
+            scorenow + 4
+        16 ->
             scorenow + 2
         _ ->
             scorenow + 1
@@ -407,13 +448,13 @@ clearLineBonus model =
     case (round model) of 
         0 ->
             300
-        2 ->
-            200
         4 ->
-            100
-        6 ->
-            50
+            200
         8 ->
+            100
+        12 ->
+            50
+        16 ->
             50
         _ ->
             25

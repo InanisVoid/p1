@@ -5209,10 +5209,27 @@ var $author$project$Model$Model = F4(
 		return {player1: player1, player2: player2, size: size, status: status};
 	});
 var $author$project$Model$NotStarted = {$: 'NotStarted'};
-var $author$project$Model$Player = F9(
-	function (ball, bat, bricks, moveLeft, moveRight, lose, direction, teachers, score) {
-		return {ball: ball, bat: bat, bricks: bricks, direction: direction, lose: lose, moveLeft: moveLeft, moveRight: moveRight, score: score, teachers: teachers};
-	});
+var $author$project$Model$Player = function (ball) {
+	return function (bat) {
+		return function (bricks) {
+			return function (moveLeft) {
+				return function (moveRight) {
+					return function (lose) {
+						return function (direction) {
+							return function (teachers) {
+								return function (score) {
+									return function (isAI) {
+										return {ball: ball, bat: bat, bricks: bricks, direction: direction, isAI: isAI, lose: lose, moveLeft: moveLeft, moveRight: moveRight, score: score, teachers: teachers};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var $author$project$Model$Ball = F6(
 	function (x, y, r, edge, xSpeed, ySpeed) {
 		return {edge: edge, r: r, x: x, xSpeed: xSpeed, y: y, ySpeed: ySpeed};
@@ -5225,7 +5242,7 @@ var $author$project$Model$Rec = F4(
 		return {cx: cx, cy: cy, halfHeight: halfHeight, halfWidth: halfWidth};
 	});
 var $author$project$Model$recInit = A4($author$project$Model$Rec, 0, 0, 0, 0);
-var $author$project$Model$ballConfig = A6($author$project$Model$Ball, 25 / 2, 70 / 2, 1.5 / 2, $author$project$Model$recInit, 1 / 2, (-1) / 2);
+var $author$project$Model$ballConfig = A6($author$project$Model$Ball, 20 / 2, 70 / 2, 1.5 / 2, $author$project$Model$recInit, 1 / 2, (-1) / 2);
 var $author$project$Model$ballRecUpdate = function (model) {
 	var newRec = A4($author$project$Model$Rec, model.x, model.y, model.r, model.r);
 	return _Utils_update(
@@ -5239,7 +5256,7 @@ var $author$project$Model$Bat = F6(
 	});
 var $author$project$Model$batConfig = A6($author$project$Model$Bat, 45 / 2, 75 / 2, 20 / 2, 2.5 / 2, $author$project$Model$recInit, 0);
 var $author$project$Model$batRecUpdate = function (model) {
-	var halfy = model.height / 2;
+	var halfy = (model.height / 2) + 0.5;
 	var newy = model.y + halfy;
 	var halfx = model.width / 2;
 	var newx = model.x + halfx;
@@ -5249,30 +5266,173 @@ var $author$project$Model$batRecUpdate = function (model) {
 		{edge: newRec});
 };
 var $author$project$Model$batInit = $author$project$Model$batRecUpdate($author$project$Model$batConfig);
-var $author$project$Model$Brick = F6(
-	function (x, y, width, height, edge, collision) {
-		return {collision: collision, edge: edge, height: height, width: width, x: x, y: y};
+var $author$project$Model$Brick = F8(
+	function (x, y, width, height, edge, collision, seed, imageurl) {
+		return {collision: collision, edge: edge, height: height, imageurl: imageurl, seed: seed, width: width, x: x, y: y};
 	});
-var $author$project$Model$brickConfig = A6($author$project$Model$Brick, 0, 0, 10 / 2, 4 / 2, $author$project$Model$recInit, false);
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $author$project$Model$brickConfig = A8(
+	$author$project$Model$Brick,
+	0,
+	0,
+	10,
+	4,
+	$author$project$Model$recInit,
+	false,
+	$elm$random$Random$initialSeed(0),
+	'');
 var $author$project$Model$canvasWidth = 100 / 2;
 var $elm$core$Basics$ge = _Utils_ge;
 var $author$project$Model$brickRecUpdate = function (model) {
-	var halfy = model.height / 2;
+	var halfy = (model.height / 2) - 0.2;
 	var newy = model.y + halfy;
-	var halfx = model.width / 2;
+	var halfx = (model.width / 2) - 0.2;
 	var newx = model.x + halfx;
 	var newRec = A4($author$project$Model$Rec, newx, newy, halfx, halfy);
 	return _Utils_update(
 		model,
 		{edge: newRec});
 };
-var $author$project$Model$genearateOneBrick = F2(
-	function (x, y) {
-		var bricktemp = A6($author$project$Model$Brick, x, y, $author$project$Model$brickConfig.width, $author$project$Model$brickConfig.height, $author$project$Model$recInit, $author$project$Model$brickConfig.collision);
+var $author$project$Model$genearateOneBrick = F4(
+	function (x, y, seed, url) {
+		var bricktemp = A8($author$project$Model$Brick, x, y, $author$project$Model$brickConfig.width, $author$project$Model$brickConfig.height, $author$project$Model$recInit, $author$project$Model$brickConfig.collision, seed, url);
 		return $author$project$Model$brickRecUpdate(bricktemp);
 	});
-var $author$project$Model$generateBricks = F4(
-	function (bricklist, number, x, y) {
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Model$images = _List_fromArray(
+	['./images/brick1.png', './images/brick2.png', './images/brick3.png', './images/brick4.png']);
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Model$getImages = function (num) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		'',
+		$elm$core$List$head(
+			A2($elm$core$List$drop, num, $author$project$Model$images)));
+};
+var $elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _v0.a;
+				var hi = _v0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+						$elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = $elm$random$Random$peel(seed);
+							var seedN = $elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v1 = genA(seed0);
+				var a = _v1.a;
+				var seed1 = _v1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0.a;
+		return generator(seed);
+	});
+var $author$project$Model$randomImages = function (seed0) {
+	var num = A2($elm$random$Random$int, 0, 3);
+	return A2(
+		$elm$random$Random$step,
+		A2($elm$random$Random$map, $author$project$Model$getImages, num),
+		seed0);
+};
+var $author$project$Model$generateBricks = F5(
+	function (bricklist, number, x, y, seed) {
 		generateBricks:
 		while (true) {
 			var nexty = F2(
@@ -5283,37 +5443,48 @@ var $author$project$Model$generateBricks = F4(
 			var nextx = function (xinput) {
 				return (_Utils_cmp(xinput + $author$project$Model$brickConfig.width, $author$project$Model$canvasWidth) < 0) ? (xinput + $author$project$Model$brickConfig.width) : 0;
 			};
+			var _v0 = $author$project$Model$randomImages(seed);
+			var urlString = _v0.a;
+			var seed0 = _v0.b;
 			if (!number) {
 				return bricklist;
 			} else {
 				var $temp$bricklist = A2(
 					$elm$core$List$cons,
-					A2($author$project$Model$genearateOneBrick, x, y),
+					A4($author$project$Model$genearateOneBrick, x, y, seed0, urlString),
 					bricklist),
 					$temp$number = number - 1,
 					$temp$x = nextx(x),
-					$temp$y = ytemp;
+					$temp$y = ytemp,
+					$temp$seed = seed0;
 				bricklist = $temp$bricklist;
 				number = $temp$number;
 				x = $temp$x;
 				y = $temp$y;
+				seed = $temp$seed;
 				continue generateBricks;
 			}
 		}
 	});
-var $author$project$Model$total = 50;
-var $author$project$Model$brickListInit = A4($author$project$Model$generateBricks, _List_Nil, $author$project$Model$total, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
+var $author$project$Model$total = 25;
+var $author$project$Model$brickListInit = A5(
+	$author$project$Model$generateBricks,
+	_List_Nil,
+	$author$project$Model$total,
+	$author$project$Model$brickConfig.x,
+	$author$project$Model$brickConfig.y,
+	$elm$random$Random$initialSeed(40));
 var $author$project$Heros$Teacher = F7(
 	function (ballSpeed, batSpeed, batWidth, score, name, description, url) {
 		return {ballSpeed: ballSpeed, batSpeed: batSpeed, batWidth: batWidth, description: description, name: name, score: score, url: url};
 	});
 var $author$project$Heros$hSS = A7($author$project$Heros$Teacher, 1.2, 1, 1, 1, 'HSS', 'BallSpeed*1.2', './images/HSS.jpg');
-var $author$project$Heros$mK = A7($author$project$Heros$Teacher, 1, 1, 1.2, 1, 'MK', 'BatLength*1.2', './images/MK.jpg');
+var $author$project$Heros$mK = A7($author$project$Heros$Teacher, 1, 1, 2, 1, 'MK', 'BatLength*1.2', './images/MK.jpg');
 var $author$project$Heros$mN = A7($author$project$Heros$Teacher, 1, 1, 1, 1.2, 'MN', 'Score*1.2', './images/MN.jpg');
 var $author$project$Heros$zQ = A7($author$project$Heros$Teacher, 1, 1.2, 1, 1, 'ZQ', 'BatSpeed*1.2', './images/ZQ.jpg');
 var $author$project$Heros$teachers = _List_fromArray(
 	[$author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ, $author$project$Heros$hSS]);
-var $author$project$Model$initPlayer = A9($author$project$Model$Player, $author$project$Model$ballInit, $author$project$Model$batInit, $author$project$Model$brickListInit, false, false, false, 0, $author$project$Heros$teachers, 0);
+var $author$project$Model$initPlayer = $author$project$Model$Player($author$project$Model$ballInit)($author$project$Model$batInit)($author$project$Model$brickListInit)(false)(false)(false)(0)($author$project$Heros$teachers)(0)(false);
 var $author$project$Model$init = A4(
 	$author$project$Model$Model,
 	_Utils_Tuple2(0, 0),
@@ -6372,15 +6543,6 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $rtfeldman$elm_css$Css$Structure$Output$charsetToString = function (charset) {
 	return A2(
 		$elm$core$Maybe$withDefault,
@@ -7090,9 +7252,7 @@ var $Skinney$murmur3$Murmur3$HashData = F4(
 	});
 var $Skinney$murmur3$Murmur3$c1 = 3432918353;
 var $Skinney$murmur3$Murmur3$c2 = 461845907;
-var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var $Skinney$murmur3$Murmur3$multiplyBy = F2(
 	function (b, a) {
 		return ((a & 65535) * b) + ((((a >>> 16) * b) & 65535) << 16);
@@ -7103,7 +7263,6 @@ var $Skinney$murmur3$Murmur3$rotlBy = F2(
 	function (b, a) {
 		return (a << b) | (a >>> (32 - b));
 	});
-var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $Skinney$murmur3$Murmur3$finalize = function (data) {
 	var acc = (!(!data.hash)) ? (data.seed ^ A2(
 		$Skinney$murmur3$Murmur3$multiplyBy,
@@ -7239,15 +7398,6 @@ var $rtfeldman$elm_css$Hash$fromString = function (str) {
 		_Utils_chr('_'),
 		$rtfeldman$elm_hex$Hex$toString(
 			A2($Skinney$murmur3$Murmur3$hashString, $rtfeldman$elm_css$Hash$murmurSeed, str)));
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
 };
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$last = function (list) {
 	last:
@@ -8136,14 +8286,35 @@ var $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled = function (vdom) {
 };
 var $rtfeldman$elm_css$Html$Styled$toUnstyled = $rtfeldman$elm_css$VirtualDom$Styled$toUnstyled;
 var $author$project$Model$canvasHeight = 77 / 2;
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $elm$core$Basics$round = _Basics_round;
 var $author$project$Update$checkLose = function (model) {
+	var checkbrick = function (brick) {
+		return A2(
+			$elm$core$List$member,
+			36,
+			A2(
+				$elm$core$List$map,
+				function (value) {
+					return $elm$core$Basics$round(value.y);
+				},
+				brick)) ? true : false;
+	};
 	var checkball = function (ball) {
 		return (_Utils_cmp(ball.y, $author$project$Model$canvasHeight) > -1) ? true : false;
 	};
 	return _Utils_update(
 		model,
 		{
-			lose: checkball(model.ball)
+			lose: checkball(model.ball) || checkbrick(model.bricks)
 		});
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -8242,24 +8413,31 @@ var $author$project$Update$generateNewBat = F3(
 	function (teacher, direction, model) {
 		var dt = teacher.batSpeed;
 		var xSpeed = (dt * direction) * 1.005;
-		var xNew = model.x + xSpeed;
-		var batTemp = A6($author$project$Model$Bat, xNew, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, xSpeed);
-		return $author$project$Model$batRecUpdate(batTemp);
+		var getbatTemp = (_Utils_cmp((model.x + xSpeed) + ($author$project$Model$batConfig.width * teacher.batWidth), $author$project$Model$canvasWidth) > 0) ? A6($author$project$Model$Bat, $author$project$Model$canvasWidth - ($author$project$Model$batConfig.width * teacher.batWidth), model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, 0) : (((model.x + xSpeed) < 0) ? A6($author$project$Model$Bat, 0, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, 0) : A6($author$project$Model$Bat, model.x + xSpeed, model.y, $author$project$Model$batConfig.width * teacher.batWidth, model.height, $author$project$Model$recInit, xSpeed));
+		return $author$project$Model$batRecUpdate(getbatTemp);
 	});
 var $author$project$Update$updateBat = function (model) {
+	var batx = model.bat.x + (0.5 * model.bat.width);
+	var ballx = model.ball.x;
+	var direction = model.isAI ? ((_Utils_cmp(ballx, batx) > 0) ? 1 : ((_Utils_cmp(ballx, batx) < 0) ? (-1) : 0)) : model.direction;
 	return _Utils_update(
 		model,
 		{
 			bat: A3(
 				$author$project$Update$generateNewBat,
 				$author$project$Heros$getFirstTeacher(model.teachers),
-				model.direction,
+				direction,
 				model.bat)
 		});
 };
 var $author$project$Update$addNewBricks = function (model) {
-	var number = 10;
-	return A4($author$project$Model$generateBricks, model, number, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y);
+	var seedBrick = A2(
+		$elm$core$Maybe$withDefault,
+		$author$project$Model$brickConfig,
+		$elm$core$List$head(
+			$elm$core$List$reverse(model)));
+	var number = 5;
+	return A5($author$project$Model$generateBricks, model, number, $author$project$Model$brickConfig.x, $author$project$Model$brickConfig.y, seedBrick.seed);
 };
 var $author$project$Update$updateOriginalBricks = function (model) {
 	var updatingEdge = function (brickTemp2) {
@@ -8283,20 +8461,19 @@ var $author$project$Update$addOneLineBricks = function (onePlayer) {
 		onePlayer,
 		{bricks: newBricks});
 };
-var $elm$core$Basics$round = _Basics_round;
 var $author$project$Update$clearBrickScore = F2(
 	function (model, scorenow) {
 		var _v0 = $elm$core$Basics$round(model);
 		switch (_v0) {
 			case 0:
 				return scorenow + 10;
-			case 2:
-				return scorenow + 8;
 			case 4:
-				return scorenow + 6;
-			case 6:
-				return scorenow + 4;
+				return scorenow + 8;
 			case 8:
+				return scorenow + 6;
+			case 12:
+				return scorenow + 4;
+			case 16:
 				return scorenow + 2;
 			default:
 				return scorenow + 1;
@@ -8364,27 +8541,18 @@ var $author$project$Update$clearLineBonus = function (model) {
 	switch (_v0) {
 		case 0:
 			return 300;
-		case 2:
-			return 200;
 		case 4:
-			return 100;
-		case 6:
-			return 50;
+			return 200;
 		case 8:
+			return 100;
+		case 12:
+			return 50;
+		case 16:
 			return 50;
 		default:
 			return 25;
 	}
 };
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
 var $author$project$Update$clearLines = F2(
 	function (model, filteredY) {
 		var getYList = function (bricksTemp) {
@@ -8506,27 +8674,6 @@ var $author$project$Update$checkDirection = function (model) {
 		model,
 		{bat: batSpeedReset, direction: 0}));
 };
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
 var $author$project$Heros$getNextTeacher = function (model) {
 	var teacherTail = A2($elm$core$List$drop, 1, model);
 	var firstTeacher = A2($elm$core$List$take, 1, model);
@@ -8552,7 +8699,7 @@ var $author$project$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{player1: $author$project$Model$initPlayer, player2: $author$project$Model$initPlayer}),
+						{player1: $author$project$Model$initPlayer, player2: $author$project$Model$initPlayer, status: $author$project$Model$NotStarted}),
 					$elm$core$Platform$Cmd$none);
 			case 'Resize':
 				var width = msg.a;
@@ -8676,11 +8823,29 @@ var $author$project$Update$update = F2(
 			case 'Tick':
 				var time = msg.a;
 				return $author$project$Update$animate(model);
-			default:
+			case 'Noop':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			default:
+				var no = msg.a;
+				var ptemp = (no === 1) ? model.player1 : model.player2;
+				var p = _Utils_update(
+					ptemp,
+					{isAI: !ptemp.isAI});
+				return (no === 1) ? _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player1: p}),
+					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{player2: p}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $author$project$Messages$Changeidentity = function (a) {
+	return {$: 'Changeidentity', a: a};
+};
 var $author$project$Messages$NextTeacher1 = {$: 'NextTeacher1'};
 var $author$project$Messages$NextTeacher2 = {$: 'NextTeacher2'};
 var $author$project$Messages$PreviousTeacher1 = {$: 'PreviousTeacher1'};
@@ -8852,7 +9017,7 @@ var $author$project$View$bricks = function (bricksInput) {
 			$rtfeldman$elm_css$Svg$Styled$image,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Svg$Styled$Attributes$xlinkHref('./images/brickBlack.png'),
+					$rtfeldman$elm_css$Svg$Styled$Attributes$xlinkHref(model.imageurl),
 					$rtfeldman$elm_css$Svg$Styled$Attributes$preserveAspectRatio('none meet'),
 					$rtfeldman$elm_css$Svg$Styled$Attributes$x(
 					$elm$core$String$fromFloat(model.x)),
@@ -8862,8 +9027,8 @@ var $author$project$View$bricks = function (bricksInput) {
 					$elm$core$String$fromFloat(model.width)),
 					$rtfeldman$elm_css$Svg$Styled$Attributes$height(
 					$elm$core$String$fromFloat(model.height)),
-					$rtfeldman$elm_css$Svg$Styled$Attributes$stroke('#A4C0D7'),
-					$rtfeldman$elm_css$Svg$Styled$Attributes$strokeWidth('0.1')
+					$rtfeldman$elm_css$Svg$Styled$Attributes$stroke('white'),
+					$rtfeldman$elm_css$Svg$Styled$Attributes$strokeWidth('0.2')
 				]),
 			_List_Nil);
 	};
@@ -10441,6 +10606,8 @@ var $author$project$View$canvas = function (model) {
 			return $author$project$Messages$Reset;
 		}
 	}();
+	var aitext2 = p2.isAI ? 'AI' : 'human';
+	var aitext1 = p1.isAI ? 'AI' : 'human';
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$nav,
 		_List_fromArray(
@@ -10637,8 +10804,20 @@ var $author$project$View$canvas = function (model) {
 								$author$project$Style$Button$styleButton,
 								_List_fromArray(
 									[
+										$rtfeldman$elm_css$Html$Styled$Events$onClick(
+										$author$project$Messages$Changeidentity(1)),
+										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '20px')
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(aitext1)
+									])),
+								A2(
+								$author$project$Style$Button$styleButton,
+								_List_fromArray(
+									[
 										$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Messages$NextTeacher1),
-										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '90px')
+										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '20px')
 									]),
 								_List_fromArray(
 									[
@@ -10759,8 +10938,20 @@ var $author$project$View$canvas = function (model) {
 								$author$project$Style$Button$styleButton,
 								_List_fromArray(
 									[
+										$rtfeldman$elm_css$Html$Styled$Events$onClick(
+										$author$project$Messages$Changeidentity(2)),
+										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '20px')
+									]),
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Html$Styled$text(aitext2)
+									])),
+								A2(
+								$author$project$Style$Button$styleButton,
+								_List_fromArray(
+									[
 										$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Messages$NextTeacher2),
-										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '90px')
+										A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'margin-top', '20px')
 									]),
 								_List_fromArray(
 									[
@@ -10795,13 +10986,13 @@ var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
-var $author$project$View$pixelHeight = 1000;
-var $author$project$View$pixelWidth = 1000;
 var $author$project$View$view = function (model) {
+	var configwidth = 1000;
+	var configheight = 1000;
 	var _v0 = model.size;
 	var w = _v0.a;
 	var h = _v0.b;
-	var r = (_Utils_cmp(w / h, $author$project$View$pixelWidth / $author$project$View$pixelHeight) > 0) ? A2($elm$core$Basics$min, 1, h / $author$project$View$pixelHeight) : A2($elm$core$Basics$min, 1, w / $author$project$View$pixelWidth);
+	var r = ((w / h) > 1) ? A2($elm$core$Basics$min, 1, h / configwidth) : A2($elm$core$Basics$min, 1, w / configheight);
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
 		_List_fromArray(
@@ -10811,7 +11002,9 @@ var $author$project$View$view = function (model) {
 				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'position', 'absolute'),
 				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'left', '0'),
 				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'top', '0'),
-				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'background', 'linear-gradient(135deg, rgba(206,188,155,1) 0%, rgba(85,63,50,1) 51%, rgba(42,31,25,1) 100%)')
+				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'background', 'linear-gradient(135deg, rgba(206,188,155,1) 0%, rgba(85,63,50,1) 51%, rgba(42,31,25,1) 100%)'),
+				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'overflow', 'scroll'),
+				A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'overflow-x', 'hidden')
 			]),
 		_List_fromArray(
 			[
@@ -10822,20 +11015,20 @@ var $author$project$View$view = function (model) {
 						A2(
 						$rtfeldman$elm_css$Html$Styled$Attributes$style,
 						'width',
-						$elm$core$String$fromFloat($author$project$View$pixelWidth) + 'px'),
+						$elm$core$String$fromFloat(configwidth) + 'px'),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$Attributes$style,
 						'height',
-						$elm$core$String$fromFloat($author$project$View$pixelHeight) + 'px'),
+						$elm$core$String$fromFloat(configheight) + 'px'),
 						A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'position', 'absolute'),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$Attributes$style,
 						'left',
-						$elm$core$String$fromFloat((w - ($author$project$View$pixelWidth * r)) / 2) + 'px'),
+						$elm$core$String$fromFloat((w - (configwidth * r)) / 2) + 'px'),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$Attributes$style,
 						'top',
-						$elm$core$String$fromFloat((h - ($author$project$View$pixelHeight * r)) / 2) + 'px'),
+						$elm$core$String$fromFloat((h - (configheight * r)) / 2) + 'px'),
 						A2($rtfeldman$elm_css$Html$Styled$Attributes$style, 'transform-origin', '0 0'),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$Attributes$style,

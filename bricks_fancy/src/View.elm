@@ -18,7 +18,7 @@ import Svg exposing (..)
 import Svg.Styled exposing (..)
 import Svg.Styled.Attributes exposing (..)
 
-
+import Random
 
 -- import Debug
 
@@ -40,44 +40,43 @@ import Svg.Styled.Attributes exposing (..)
 
 
 
-pixelWidth : Float
-pixelWidth =
-    1000
 
-
-pixelHeight : Float
-pixelHeight =
-    1000
 
 view : Model -> Html Msg
 view model =
     let
         ( w, h ) =
             model.size
-
+        
+        configheight =1000
+        configwidth = 1000
         r =
-            if w / h > pixelWidth / pixelHeight then
-                Basics.min 1 (h / pixelHeight)
+            if w / h > 1 then
+                Basics.min 1 (h / configwidth)
 
             else
-                Basics.min 1 (w / pixelWidth)
+                Basics.min 1 (w / configheight)
     in
     Html.Styled.div
-        [ Html.Styled.Attributes.style "width" "100%"
+        [ 
+            Html.Styled.Attributes.style "width" "100%"
         , Html.Styled.Attributes.style "height" "100%"
         , Html.Styled.Attributes.style "position" "absolute"
         , Html.Styled.Attributes.style "left" "0"
         , Html.Styled.Attributes.style "top" "0"
         , Html.Styled.Attributes.style "background" "linear-gradient(135deg, rgba(206,188,155,1) 0%, rgba(85,63,50,1) 51%, rgba(42,31,25,1) 100%)"
+        , Html.Styled.Attributes.style "overflow" "scroll"
+        , Html.Styled.Attributes.style "overflow-x" "hidden"
         ]
         [ Html.Styled.div
-            [ Html.Styled.Attributes.style "width" (String.fromFloat pixelWidth ++ "px")
-            , Html.Styled.Attributes.style "height" (String.fromFloat pixelHeight ++ "px")
-            , Html.Styled.Attributes.style "position" "absolute"
-            , Html.Styled.Attributes.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
-            , Html.Styled.Attributes.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
-            , Html.Styled.Attributes.style "transform-origin" "0 0"
-            , Html.Styled.Attributes.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+            [ 
+                Html.Styled.Attributes.style "width" (String.fromFloat configwidth ++ "px")
+                , Html.Styled.Attributes.style "height" (String.fromFloat configheight ++ "px")
+                , Html.Styled.Attributes.style "position" "absolute"
+                , Html.Styled.Attributes.style "left" (String.fromFloat ((w - configwidth*r) / 2) ++ "px")
+                , Html.Styled.Attributes.style "top" (String.fromFloat ((h - configheight*r) / 2) ++ "px")
+                , Html.Styled.Attributes.style "transform-origin" "0 0"
+                , Html.Styled.Attributes.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
             ]
             [ canvas model
             ]
@@ -143,27 +142,42 @@ heroCSS =
 -- canvas : Model -> Html Msg
 canvas model =
     let
-       p1=model.player1
-       p1Teachers = p1.teachers
-       p1FirstTeacher = getFirstTeacher p1Teachers
+        p1=model.player1
+        p1Teachers = p1.teachers
+        p1FirstTeacher = getFirstTeacher p1Teachers
 
-       p2=model.player2
-       p2Teachers = p2.teachers
-       p2FirstTeacher = getFirstTeacher p2Teachers
+        p2=model.player2
+        p2Teachers = p2.teachers
+        p2FirstTeacher = getFirstTeacher p2Teachers
 
-       getstatusmessage = 
+        aitext1 = 
+            if p1.isAI then 
+                "AI"
+
+            else 
+                "human" 
+        
+        aitext2 = 
+            if p2.isAI then 
+                "AI"
+            else 
+                "human"
+
+        getstatusmessage = 
          case model.status of 
             NotStarted ->
                 Start
             _ ->
                 Reset
 
-       getstatustext = 
+        getstatustext = 
          case model.status of 
             NotStarted ->
                 "Start"
             _ ->
                 "Reset"
+        
+         
 
     in
     --"#A4C0D7"
@@ -229,8 +243,9 @@ canvas model =
             ],
             
             Html.Styled.div[Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "margin-left" "35%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
-                styleButton[onClick PreviousTeacher1][Html.Styled.text "Previous"],                
-                styleButton[onClick NextTeacher1,Html.Styled.Attributes.style "margin-top" "90px"][Html.Styled.text "Next"]
+                styleButton[onClick PreviousTeacher1][Html.Styled.text "Previous"],   
+                styleButton[onClick (Changeidentity 1),Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text aitext1],               
+                styleButton[onClick NextTeacher1,Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text "Next"]
             ],
             
             
@@ -258,8 +273,9 @@ canvas model =
             ],
             
             Html.Styled.div[Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "margin-right" "7%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
-                styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],                
-                styleButton[onClick NextTeacher2,Html.Styled.Attributes.style "margin-top" "90px"][Html.Styled.text "Next"]
+                styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],            
+                styleButton[onClick (Changeidentity 2),Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text aitext2],      
+                styleButton[onClick NextTeacher2,Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text "Next"]
             ],
 
 
@@ -297,11 +313,13 @@ bricks : List Brick -> List (Svg.Styled.Svg msg)
 bricks bricksInput =
     let
         createBricksFormat model =
-           Svg.Styled.image [ xlinkHref "./images/brickBlack.png", preserveAspectRatio "none meet",  x <| String.fromFloat model.x, y <| String.fromFloat model.y, 
-           Svg.Styled.Attributes.width <| String.fromFloat model.width, Svg.Styled.Attributes.height <| String.fromFloat model.height, Svg.Styled.Attributes.stroke "#A4C0D7",Svg.Styled.Attributes.strokeWidth "0.1"]
+           Svg.Styled.image [ xlinkHref model.imageurl, preserveAspectRatio "none meet",  x <| String.fromFloat model.x, y <| String.fromFloat model.y, 
+           Svg.Styled.Attributes.width <| String.fromFloat model.width, Svg.Styled.Attributes.height <| String.fromFloat model.height, Svg.Styled.Attributes.stroke "white",Svg.Styled.Attributes.strokeWidth "0.2"]
            []
     in
         List.map createBricksFormat bricksInput
+
+
 
 ball : Ball -> Svg.Styled.Svg msg 
 ball ballInput =

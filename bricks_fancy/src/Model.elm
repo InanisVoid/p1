@@ -1,9 +1,11 @@
 module Model exposing (..)
 import Heros exposing (..)
+import Random
 --import Heros exposing (Teacher) 
 
 
-import Json.Decode exposing (float)
+
+
 type alias Rec =
     { cx : Float
     , cy : Float
@@ -39,6 +41,8 @@ type alias Brick =
     , height : Float
     , edge : Rec
     , collision : Bool
+    , seed : Random.Seed
+    , imageurl : String
     }
 
 type alias Bat = 
@@ -71,6 +75,7 @@ type alias Player =
     , direction : Float
     , teachers : List Teacher
     , score : Float
+    , isAI : Bool
     -- , canvasWidth : Int
     -- , canvasHeight : Int
     }
@@ -84,7 +89,7 @@ type alias Model =
     }
 
 brickConfig : Brick
-brickConfig = Brick 0 0 (10/2) (4/2) recInit False
+brickConfig = Brick 0 0  10  4 recInit False (Random.initialSeed 0) ""
 
 -- batConfig : Bat
 -- batConfig = Bat (45/2) (70/2) (20/2) (2.5/2) recInit 0
@@ -92,10 +97,10 @@ batConfig : Bat
 batConfig = Bat (45/2) (75/2) (20/2) (2.5/2) recInit 0
 
 ballConfig: Ball
-ballConfig = Ball (25/2) (70/2) (1.5/2) recInit (1/2) (-1/2)
+ballConfig = Ball (20/2) (70/2) (1.5/2) recInit (1/2) (-1/2)
 
 total : Int
-total = 50
+total = 25
 
 canvasWidth : Float
 canvasWidth = 100/2
@@ -110,8 +115,8 @@ halfWidth = 50/2
 brickRecUpdate : Brick -> Brick
 brickRecUpdate model = 
     let
-        halfx = model.width / 2 
-        halfy = model.height /2 
+        halfx = model.width / 2 - 0.2 
+        halfy = model.height /2 - 0.2
         newx = model.x + halfx
         newy = model.y + halfy
         newRec = Rec newx newy halfx halfy
@@ -122,7 +127,7 @@ batRecUpdate : Bat -> Bat
 batRecUpdate model = 
     let
         halfx = model.width / 2 
-        halfy = model.height /2 
+        halfy = model.height /2 +0.5
         newx = model.x + halfx
         newy = model.y + halfy
         newRec = Rec newx newy halfx halfy
@@ -137,15 +142,15 @@ ballRecUpdate model =
         { model| edge = newRec}
 
 
-genearateOneBrick : Float -> Float -> Brick
-genearateOneBrick x y =
+genearateOneBrick : Float -> Float -> Random.Seed-> String -> Brick
+genearateOneBrick x y seed url =
     let
-        bricktemp = Brick x y brickConfig.width brickConfig.height recInit brickConfig.collision
+        bricktemp = Brick x y brickConfig.width brickConfig.height recInit brickConfig.collision seed url
     in
         brickRecUpdate bricktemp
 
-generateBricks : List Brick -> Int -> Float -> Float -> List Brick
-generateBricks bricklist number x y =
+generateBricks : List Brick -> Int -> Float -> Float -> Random.Seed -> List Brick
+generateBricks bricklist number x y seed =
     let
         nexty xinput yinput =
             if (xinput+brickConfig.width) >= canvasWidth then
@@ -158,11 +163,35 @@ generateBricks bricklist number x y =
             else
                 0 
         ytemp = nexty x y
+        ( urlString, seed0 ) =
+            randomImages seed
     in
         if number == 0 then
             bricklist
         else
-            generateBricks (  genearateOneBrick x y :: bricklist ) (number - 1) (nextx x) ytemp 
+            generateBricks (  genearateOneBrick x y seed0 urlString :: bricklist ) (number - 1) (nextx x) ytemp seed0 
+
+
+images : List String
+images = ["./images/brick1.png","./images/brick2.png","./images/brick3.png","./images/brick4.png"]
+
+getImages : Int -> String
+getImages num =
+    Maybe.withDefault "" (List.head ( List.drop num images))
+
+randomImages : Random.Seed -> (String, Random.Seed)
+randomImages seed0 =
+    let
+        num = Random.int 0 3
+    in
+        Random.step (Random.map getImages num) seed0
+
+
+
+
+
+
+
 
 
 ballInit : Ball
@@ -170,10 +199,10 @@ ballInit = ballRecUpdate ballConfig
 batInit : Bat
 batInit =batRecUpdate batConfig
 brickListInit : List Brick
-brickListInit = generateBricks [] total brickConfig.x brickConfig.y 
+brickListInit = generateBricks [] total brickConfig.x brickConfig.y (Random.initialSeed 40)
 
 initPlayer : Player
-initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0
+initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0 False
 
 init : Model 
 init = Model (0,0) initPlayer initPlayer NotStarted

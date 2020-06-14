@@ -19,7 +19,7 @@ mN : Teacher
 mN = Teacher 1 1 1 1.2 "MN" "Score*1.2" "./images/MN.jpg"
 
 mK : Teacher
-mK = Teacher 1 1 1.2 1 "MK" "BatLength*1.2" "./images/MK.jpg"
+mK = Teacher 1 1 2 1 "MK" "BatLength*1.2" "./images/MK.jpg"
 
 zQ : Teacher
 zQ = Teacher 1 1.2 1 1 "ZQ" "BatSpeed*1.2" "./images/ZQ.jpg"

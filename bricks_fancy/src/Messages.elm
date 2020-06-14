@@ -15,3 +15,4 @@ type Msg
     | Start
     | Reset
     | Noop
+    | Changeidentity Int
