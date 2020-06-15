@@ -27,17 +27,19 @@ styleText =
          Css.border3 (px 1) solid (rgba 241 6 6 0.81),
          Css.backgroundColor (rgba 220  17 1 0.16),
          boxShadow4 (px 0) (px 0) (px 2) (hex "#ff0303"),
-         color (hex "#ff0303"),
-         textShadow3 (px 2) (px 1) (hex "#FFFFFF"),
+         color (hex "#FFFFFF"),
+        --  textShadow3 (px 2) (px 1) (hex "#FFFFFF"),
          cursor pointer,
+         fontSize (px 11),
+         fontFamily serif,
         --  textAlign left!important,
-         color (hex "#721c24"),
+        --  color (hex "#721c24"),
         --  Css.backgroundColor (hex "#f8d7da"),
          borderColor (hex "#f5c6cb"),
         --  opacity (Css.num 0.6), 
          hover[
-                  Css.backgroundColor (rgba 220 17 1 0.6),
-                  color (hex "#000000") 
+                  Css.backgroundColor (rgba 220 17 1 0.6)
+                  -- color (hex "#000000") 
                ],
          transition
            [ 

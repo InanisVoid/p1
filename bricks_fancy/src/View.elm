@@ -227,19 +227,21 @@ canvas model =
                     styleText [ 
                                 Html.Styled.Attributes.style "margin-top" "10%",
                                 Html.Styled.Attributes.style "margin-bottom" "10%",
-                                Html.Styled.Attributes.style "margin-right" "10%",
-                                Html.Styled.Attributes.style "width" "120px",
-                                Html.Styled.Attributes.style "height" "135px",
-                                Html.Styled.Attributes.style "text-align" "center",
-                                Html.Styled.Attributes.style "float" "right"] [Html.Styled.text p1FirstTeacher.description],
+                                Html.Styled.Attributes.style "margin-right" "7%",
+                                Html.Styled.Attributes.style "width" "135px",
+                                Html.Styled.Attributes.style "height" "150px",
+                                Html.Styled.Attributes.style "float" "right"] 
+                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"][Html.Styled.text p1FirstTeacher.description]],
 
                     styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
-                                Html.Styled.Attributes.style "margin-left" "10%",
-                                Html.Styled.Attributes.style "height" "15%",
-                                Html.Styled.Attributes.style "width" "100px",
-                                Html.Styled.Attributes.style "float" "left"]  [Html.Styled.text p1FirstTeacher.name]
+                                Html.Styled.Attributes.style "margin-left" "8%",
+                                Html.Styled.Attributes.style "height" "23%",
+                                Html.Styled.Attributes.style "width" "110px",
+                                Html.Styled.Attributes.style "float" "left"]  
+                                [div[Html.Styled.Attributes.style "margin-top" "3px",Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "170%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p1FirstTeacher.name]]
                 ],
-                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] [ Html.Styled.text "Background (not available now)" ]
+                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] 
+                               [Html.Styled.div[Html.Styled.Attributes.style "margin-top" "30px",Html.Styled.Attributes.style "margin-left" "20px",Html.Styled.Attributes.style "margin-right" "8px",Html.Styled.Attributes.style "font-family" "serif"][Html.Styled.text p1FirstTeacher.background] ]
             ],
             
             Html.Styled.div[Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "margin-left" "35%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
@@ -257,19 +259,22 @@ canvas model =
                     styleText [ 
                                 Html.Styled.Attributes.style "margin-top" "10%",
                                 Html.Styled.Attributes.style "margin-bottom" "10%",
-                                Html.Styled.Attributes.style "margin-right" "10%",
-                                Html.Styled.Attributes.style "width" "120px",
-                                Html.Styled.Attributes.style "height" "135px",
-                                Html.Styled.Attributes.style "text-align" "center",
-                                Html.Styled.Attributes.style "float" "right"] [Html.Styled.text p2FirstTeacher.description],
+                                Html.Styled.Attributes.style "margin-right" "7%",
+                                Html.Styled.Attributes.style "width" "135px",
+                                Html.Styled.Attributes.style "height" "150px",
+                                Html.Styled.Attributes.style "float" "right"]
+                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"][Html.Styled.text p2FirstTeacher.description]],
+
 
                     styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
-                                Html.Styled.Attributes.style "margin-left" "10%",
-                                Html.Styled.Attributes.style "height" "15%",
-                                Html.Styled.Attributes.style "width" "100px",
-                                Html.Styled.Attributes.style "float" "left"]  [Html.Styled.text p2FirstTeacher.name]
+                                Html.Styled.Attributes.style "margin-left" "8%",
+                                Html.Styled.Attributes.style "height" "23%",
+                                Html.Styled.Attributes.style "width" "110px",
+                                Html.Styled.Attributes.style "float" "left"]
+                                [div[Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "170%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p2FirstTeacher.name]]
                 ],
-                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] [ Html.Styled.text "Background (not available now)" ]
+                styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"]
+                                 [Html.Styled.div[Html.Styled.Attributes.style "margin-top" "30px",Html.Styled.Attributes.style "margin-left" "20px",Html.Styled.Attributes.style "margin-right" "8px",Html.Styled.Attributes.style "font-family" "serif"][Html.Styled.text p2FirstTeacher.background] ]
             ],
             
             Html.Styled.div[Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "margin-right" "7%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][

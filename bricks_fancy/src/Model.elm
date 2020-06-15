@@ -1,5 +1,5 @@
 module Model exposing (..)
-import Heros exposing (..)
+import Heros exposing (Teacher,teachers)
 import Random
 --import Heros exposing (Teacher) 
 

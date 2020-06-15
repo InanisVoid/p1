@@ -7,6 +7,8 @@ import Model exposing (batConfig,initPlayer)
 import Css exposing (true)
 import Model exposing (Status(..))
 import Random
+import Model exposing (ballInit,brickListInit)
+import Model exposing (batInit)
 --import View exposing (init)
 -- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -16,7 +18,13 @@ update msg model =
             ({model | status=Playing},Cmd.none)
         
         Reset ->
-            ({model | player1=initPlayer,player2=initPlayer,status=NotStarted},Cmd.none)
+            let
+                p1=model.player1
+                p2=model.player2
+            in
+                ({model | player1={p1|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0}
+                        , player2={p2|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0}
+                        , status=NotStarted},Cmd.none)
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
