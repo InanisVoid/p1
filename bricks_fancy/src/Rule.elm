@@ -25,7 +25,7 @@ view =
       style "border-style" "outset",
       style "margin" "0 auto",
       style "width" "1000px",
-      style "height" "600px",
+      style "height" "800px",
       style "background" "linear-gradient(135deg, rgba(206,188,155,1) 0%, rgba(85,63,50,1) 51%, rgba(42,31,25,1) 100%)"]
     [
       styleTitle[style "width" "100%"][text "Game Rules"],
@@ -35,6 +35,9 @@ view =
       div[style "margin-left" "20%",style "margin-right" "20%"][h2[style "color" "white"][text "3. Your opponent's block reaches the bottom."]],
       div[style "margin-left" "20%",style "margin-right" "20%"][h1[style "color" "white"][text "Game Setting"]],
       div[style "margin-left" "20%",style "margin-right" "20%"][h2[style "color" "white"][text "You can choose your hero at the bottom of the screen, each hero has his unique skill."]],
+      div[style "margin-left" "20%",style "margin-right" "20%"][h2[style "color" "white"][text "Player1 Use A and D to control the bat and S to perfrom active skill."]],
+      div[style "margin-left" "20%",style "margin-right" "20%"][h2[style "color" "white"][text "Player2 Use ← and → to control the bat and ↓ to perfrom active skill."]],
+      div[style "margin-left" "20%",style "margin-right" "20%"][h2[style "color" "white"][text "Each player can only use active skill once"]],
       a[href "index.html"][styleButton[style "margin-left" "43%",style "width" "120%"][text "Back to Menu" ]]
     ]]
 

@@ -41,7 +41,7 @@ view model =
       style "height" "700px",
       style "background" "black"]
     [
-        styleTitle [style "width" "100%"][text "Over-Deducted"],
+        styleTitle [style "width" "100%"][text "Get out of My Class"],
         div [][video[
           src "./video/Begin.mp4",
           controls True,

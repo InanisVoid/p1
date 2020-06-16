@@ -1,4 +1,12 @@
-module Heros exposing(teacherConfig,mN,mK,zQ,hSS,teachers,getFirstTeacher,getNextTeacher,getPreviousTeacher,Teacher)
+module Heros exposing(teacherConfig,mN,mK,zQ,hSS,teachers,getFirstTeacher,getNextTeacher,getPreviousTeacher,Teacher,Skills(..))
+
+
+type Skills
+    = Bomb
+    | Addline
+    | ResetBall
+    | Bonus
+
 
 type alias Teacher =
     {
@@ -7,42 +15,48 @@ type alias Teacher =
     ,   batWidth : Float
     ,   score : Float
     ,   name : String
-    ,   description : String
+    ,   description1 : String
+    ,   description2 : String
     ,   url : String
     ,   background : String
+    ,   skill : Skills
     }
 
 
 teacherConfig : Teacher
-teacherConfig = Teacher 1 1 1 1 "" "" "" ""
+teacherConfig = Teacher 1 1 1 1 "" "" "" "" "" Bomb
 
 mN : Teacher
 mN = Teacher 1 1 1 1.2 
     "Cyber King" 
-    "Exclusive Bonus:\nThe bonus set by Martinez Chevalier  were in fact a sham. Only the teacher himself can get the bonus. So the teacher will get 1.2 times the grade."
+    "Exclusive Bonus: Score * 1.2"
+    "Overclocking: The score and bonus of breaking the next brick times 5"
     "./images/MN.jpg"
-    "Background: Martinez Chevalier mainly teaches computer science. One of his feature is that bonus is appealing to him. He always sets some unreachable bonus for his students."
+    "Background: Martinez Chevalier mainly teaches computer science. One of his feature is that bonus is appealing to him. He always sets some unreachable bonus for his students." Bonus
 
 mK : Teacher
 mK = Teacher 1 1 1.2 1 
     "The Sword of Physics" 
-    "Buffer Area:\nMatteo Kosacki can buffer the impact from the students. He will have a bat 1.2 times long." 
+    "Buffer Area: Batlength * 1.2" 
+    "Oppression: Add oneline to your opponents"
     "./images/MK.jpg"
-    "Background: Matteo Kosacki is teaching physics. He has an excellent capacity to bear. He can bear more pressure from students than other teachers, which gives him a bigger chance to win the game."
+    "Background: Matteo Kosacki is teaching physics. He has an excellent capacity to bear. He can bear more pressure from students than other teachers, which gives him a bigger chance to win the game." Addline
 
 zQ : Teacher
 zQ = Teacher 1 1.2 1 1 
     "Hand of Ragnaros" 
-    "Turbo:\nZhao Qi's powerful core will provide him incomparable speed. His bat will move 1.2 times faster" 
+    "Turbo: Batspeed * 1.2" 
+    "Inferno Bomb: Break the Bricks around your ball"
     "./images/ZQ.jpg"
-    "Background: Zhao Qi is a Chinese physics teacher. He is teaching thermodynamics right now. What he is teaching provides him a body like a internal combustion engine. He can heaten his core, which makes he move faster than others."
+    "Background: Zhao Qi is a Chinese physics teacher. He is teaching thermodynamics right now. What he is teaching provides him a body like a internal combustion engine. He can heaten his core, which makes he move faster than others." Bomb
 
 hSS : Teacher
 hSS = Teacher 1.2 1 1 1 
       "The Master of Space" 
-      "Curvature-Driven:\nHelmut Heinrich is familiar with various spaces in math, making him even familiar with the real space. Thus, he can accelearate the ball. The ball will travel 1.2 times faster." 
+      "Curvature-Driven: Ballspeed * 1.2"
+      "Recursion： Reset your ball" 
       "./images/HSS.jpg"
-      "Background: Helmut Heinrich is a math teacher. It seems that he concentrates on some intricate \"spaces\", which gives him a more agile mind than others. He can drive the students away more effectively."
+      "Background: Helmut Heinrich is a math teacher. It seems that he concentrates on some intricate \"spaces\", which gives him a more agile mind than others. He can drive the students away more effectively." ResetBall 
 
 teachers : List Teacher
 teachers = [mN,mK,zQ,hSS]

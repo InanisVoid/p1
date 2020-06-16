@@ -30,7 +30,7 @@ styleText =
          color (hex "#FFFFFF"),
         --  textShadow3 (px 2) (px 1) (hex "#FFFFFF"),
          cursor pointer,
-         fontSize (px 11),
+         fontSize (px 13),
          fontFamily serif,
         --  textAlign left!important,
         --  color (hex "#721c24"),

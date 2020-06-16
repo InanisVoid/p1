@@ -1,5 +1,6 @@
 module Messages exposing (Msg(..))
 import Browser.Dom exposing (Viewport)
+
 type Msg
     = Tick Float
     | MoveLeft1 Bool
@@ -16,3 +17,5 @@ type Msg
     | Reset
     | Noop
     | Changeidentity Int
+    | Player1Skill
+    | Player2Skill

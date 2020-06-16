@@ -7,11 +7,12 @@ import Style.Button exposing (styleButton)
 import Style.Title exposing (styleTitle)
 import Style.Text exposing (styleText)
 import Style.Card exposing (styledCard,styledCardFront,styledCardBack)
+import Json.Encode
 
 import Css exposing (..)
 import Html
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, href, src)
+import Html.Styled.Attributes exposing (css, href, src,autoplay,loop)
 import Html.Styled.Events exposing (onClick)
 
 import Svg exposing (..)
@@ -56,6 +57,11 @@ view model =
 
             else
                 Basics.min 1 (w / configheight)
+
+        audioornot = 
+            if model.bgmon then
+                [audio[src "./audio/bgm.mp3",   autoplay True,loop True][]]
+            else[] 
     in
     Html.Styled.div
         [ 
@@ -80,6 +86,9 @@ view model =
             ]
             [ canvas model
             ]
+            ,
+        div[]audioornot
+            -- audio[src "./audio/success.mp3",   autoplay True]
         ]
 
 
@@ -176,12 +185,20 @@ canvas model =
                 "Start"
             _ ->
                 "Reset"
+
+        toaudio audsrc = 
+            audio[src audsrc,   autoplay True][]
+        audiolist1 = 
+            List.map toaudio p1.audio
+
+        audiolist2 = 
+            List.map toaudio p2.audio
         
          
 
     in
     --"#A4C0D7"
-        Html.Styled.nav[
+        Html.Styled.div[
                         --Html.Styled.Attributes.style "background-color" "black",
                         Html.Styled.Attributes.style "background-image" "url(./images/Background.jpg)",
                         Html.Styled.Attributes.style "background-repeat" "no-repeat",
@@ -191,7 +208,7 @@ canvas model =
                         Html.Styled.Attributes.style "border-width" "15px",
                         Html.Styled.Attributes.style "border-style" "outset"
         ][
-        styleTitle[ Html.Styled.Attributes.style "width" "100%",Html.Styled.Attributes.style "font-size" "300%"][Html.Styled.text "Over-Deducted"],
+        styleTitle[ Html.Styled.Attributes.style "width" "100%",Html.Styled.Attributes.style "font-size" "300%"][Html.Styled.text "Get out of My Class"],
         Html.Styled.div []
         [   
             -- Html.Styled.Attributes.Html.Styled.Html.Styled.div[][img [src "Logo.png", width "300", height "300"][]],
@@ -231,20 +248,22 @@ canvas model =
                                 Html.Styled.Attributes.style "width" "135px",
                                 Html.Styled.Attributes.style "height" "150px",
                                 Html.Styled.Attributes.style "float" "right"] 
-                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"][Html.Styled.text p1FirstTeacher.description]],
+                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"]
+                                    [Html.Styled.p[] [Html.Styled.text p1FirstTeacher.description1],Html.Styled.p[] [Html.Styled.text p1FirstTeacher.description2]]
+                                ],
 
                     styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
                                 Html.Styled.Attributes.style "margin-left" "8%",
                                 Html.Styled.Attributes.style "height" "23%",
                                 Html.Styled.Attributes.style "width" "110px",
                                 Html.Styled.Attributes.style "float" "left"]  
-                                [div[Html.Styled.Attributes.style "margin-top" "3px",Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "170%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p1FirstTeacher.name]]
+                                [div[Html.Styled.Attributes.style "margin-top" "3px",Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "120%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p1FirstTeacher.name]]
                 ],
                 styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"] 
                                [Html.Styled.div[Html.Styled.Attributes.style "margin-top" "30px",Html.Styled.Attributes.style "margin-left" "20px",Html.Styled.Attributes.style "margin-right" "8px",Html.Styled.Attributes.style "font-family" "serif"][Html.Styled.text p1FirstTeacher.background] ]
             ],
             
-            Html.Styled.div[Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "margin-left" "35%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
+            Html.Styled.div[Html.Styled.Attributes.style "float" "left",Html.Styled.Attributes.style "margin-left" "35%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-90px",Html.Styled.Attributes.style "width" "50px"][
                 styleButton[onClick PreviousTeacher1][Html.Styled.text "Previous"],   
                 styleButton[onClick (Changeidentity 1),Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text aitext1],               
                 styleButton[onClick NextTeacher1,Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text "Next"]
@@ -263,7 +282,9 @@ canvas model =
                                 Html.Styled.Attributes.style "width" "135px",
                                 Html.Styled.Attributes.style "height" "150px",
                                 Html.Styled.Attributes.style "float" "right"]
-                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"][Html.Styled.text p2FirstTeacher.description]],
+                                [div[Html.Styled.Attributes.style "margin-top" "10px",Html.Styled.Attributes.style "margin-left" "5px"]
+                                    [Html.Styled.p[] [Html.Styled.text p2FirstTeacher.description1],Html.Styled.p[] [Html.Styled.text p2FirstTeacher.description2]]
+                                ],
 
 
                     styleText[  Html.Styled.Attributes.style "margin-bottom" "5%",
@@ -271,13 +292,13 @@ canvas model =
                                 Html.Styled.Attributes.style "height" "23%",
                                 Html.Styled.Attributes.style "width" "110px",
                                 Html.Styled.Attributes.style "float" "left"]
-                                [div[Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "170%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p2FirstTeacher.name]]
+                                [div[Html.Styled.Attributes.style "text-align" "center",Html.Styled.Attributes.style "font-size" "120%",Html.Styled.Attributes.style "font-width" "bold"][Html.Styled.text p2FirstTeacher.name]]
                 ],
                 styledCardBack[Html.Styled.Attributes.style "width" "300px",Html.Styled.Attributes.style "height" "200px",Html.Styled.Attributes.style "top" "500 px",Html.Styled.Attributes.style "color" "white"]
                                  [Html.Styled.div[Html.Styled.Attributes.style "margin-top" "30px",Html.Styled.Attributes.style "margin-left" "20px",Html.Styled.Attributes.style "margin-right" "8px",Html.Styled.Attributes.style "font-family" "serif"][Html.Styled.text p2FirstTeacher.background] ]
             ],
             
-            Html.Styled.div[Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "margin-right" "7%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "width" "50px"][
+            Html.Styled.div[Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "margin-right" "7%",Html.Styled.Attributes.style "margin-top" "-70px",Html.Styled.Attributes.style "margin-top" "-90px",Html.Styled.Attributes.style "width" "50px"][
                 styleButton[onClick PreviousTeacher2][Html.Styled.text "Previous"],            
                 styleButton[onClick (Changeidentity 2),Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text aitext2],      
                 styleButton[onClick NextTeacher2,Html.Styled.Attributes.style "margin-top" "20px"][Html.Styled.text "Next"]
@@ -298,8 +319,10 @@ canvas model =
             -- div[Html.Styled.Attributes.style "width" "30%",Html.Styled.Attributes.style "float" "right",Html.Styled.Attributes.style "padding-right" "12%"][styleText [] [Html.Styled.text p2FirstTeacher.description]],
             Html.Styled.div [Html.Styled.Attributes.style "text-align" "center", Html.Styled.Attributes.style "margin-top" "30%"][ styleButton[Html.Styled.Attributes.style "width" "200%",onClick getstatusmessage][Html.Styled.text getstatustext]]
             -- -- audio [ Html.Attributes.controls True, Html.Attributes.autoplay True, loop True ,src "./audio/success.mp3"][]
-        ]
-        ]
+        ],
+        div[]audiolist1,
+        div[]audiolist2
+    ]
 
 playerDemonstrate : Player -> Html msg
 playerDemonstrate model =
@@ -309,7 +332,7 @@ playerDemonstrate model =
         -- screen = rect [fill "#ffffff", x "0", y "0", width gWidth, height gHeight] []
     in
 
-        Html.Styled.div [Html.Styled.Attributes.style "postion" "fixed",Html.Styled.Attributes.style "padding-right" "20px",Html.Styled.Attributes.style "padding-left" "20px"]
+        Html.Styled.div [Html.Styled.Attributes.style "postion" "fixed",Html.Styled.Attributes.style "margin-right" "20px",Html.Styled.Attributes.style "margin-left" "20px"]
             [ Svg.Styled.svg [Svg.Styled.Attributes.width "200%", Svg.Styled.Attributes.width "200%", Svg.Styled.Attributes.viewBox <| "0 0 " ++ gWidth ++ " " ++ gHeight]
               (List.append [ball model.ball, bat model.bat] <| bricks model.bricks )
             ]

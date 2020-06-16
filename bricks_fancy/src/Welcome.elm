@@ -30,7 +30,7 @@ view model =
       style "height" "630px",
       style "background" "black"]
     [
-      div[][img [style "margin-left" "25%",style "width" "50%",style "height" "width",src "./images/Over-deducted.jpg"][]],
+      div[][img [style "margin-left" "25%",style "width" "50%",style "height" "width",src "./images/outofclass.png"][]],
       div[style "margin-left" "42%",style "margin-top" "-10%"][a[href "hello.html", style "display" "block", style "width"  "150px"][ styleButton [style "width" "100%"][text "start game"]  ]],
       div[style "margin-left" "42%"][a[href "background.html",style "display" "block", style "width"  "150px"][styleButton [style "width" "100%"][text "background"]]],
       div[style "margin-left" "42%"][a[href "rule.html", style "display" "block", style "width"  "150px"][styleButton [style "width" "100%"][text "Game Rule"]]],

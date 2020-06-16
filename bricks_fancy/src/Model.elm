@@ -21,7 +21,7 @@ type Collisiontype
 type Status 
     = NotStarted
     | Playing
-    
+
 recCollisionTest : Rec -> Rec -> Collisiontype
 recCollisionTest rec1 rec2 =
     if (abs(rec1.cx - rec2.cx) < rec1.halfWidth + rec2.halfWidth) && (abs(rec1.cy - rec2.cy) < rec1.halfHeight + rec2.halfHeight) && (abs(rec1.cx - rec2.cx) - rec1.halfWidth >= abs(rec1.cy - rec2.cy) - rec1.halfHeight) then
@@ -76,6 +76,10 @@ type alias Player =
     , teachers : List Teacher
     , score : Float
     , isAI : Bool
+    -- , skill : Bool
+    , bonusSkill : Bool
+    , chances : Int
+    , audio : List String
     -- , canvasWidth : Int
     -- , canvasHeight : Int
     }
@@ -86,6 +90,7 @@ type alias Model =
     , player1 : Player
     , player2 : Player
     , status : Status
+    , bgmon : Bool
     }
 
 brickConfig : Brick
@@ -202,7 +207,7 @@ brickListInit : List Brick
 brickListInit = generateBricks [] total brickConfig.x brickConfig.y (Random.initialSeed 40)
 
 initPlayer : Player
-initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0 False
+initPlayer = Player ballInit batInit brickListInit False False False 0 teachers 0 False False (1*2) []
 
 init : Model 
-init = Model (0,0) initPlayer initPlayer NotStarted
+init = Model (0,0) initPlayer initPlayer NotStarted False

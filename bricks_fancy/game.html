@@ -5204,9 +5204,9 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$element = _Browser_element;
 var $elm$browser$Browser$Dom$getViewport = _Browser_withWindow(_Browser_getViewport);
-var $author$project$Model$Model = F4(
-	function (size, player1, player2, status) {
-		return {player1: player1, player2: player2, size: size, status: status};
+var $author$project$Model$Model = F5(
+	function (size, player1, player2, status, bgmon) {
+		return {bgmon: bgmon, player1: player1, player2: player2, size: size, status: status};
 	});
 var $author$project$Model$NotStarted = {$: 'NotStarted'};
 var $author$project$Model$Player = function (ball) {
@@ -5485,12 +5485,13 @@ var $author$project$Heros$zQ = A8($author$project$Heros$Teacher, 1, 1.2, 1, 1, '
 var $author$project$Heros$teachers = _List_fromArray(
 	[$author$project$Heros$mN, $author$project$Heros$mK, $author$project$Heros$zQ, $author$project$Heros$hSS]);
 var $author$project$Model$initPlayer = $author$project$Model$Player($author$project$Model$ballInit)($author$project$Model$batInit)($author$project$Model$brickListInit)(false)(false)(false)(0)($author$project$Heros$teachers)(0)(false);
-var $author$project$Model$init = A4(
+var $author$project$Model$init = A5(
 	$author$project$Model$Model,
 	_Utils_Tuple2(0, 0),
 	$author$project$Model$initPlayer,
 	$author$project$Model$initPlayer,
-	$author$project$Model$NotStarted);
+	$author$project$Model$NotStarted,
+	false);
 var $author$project$Model$Playing = {$: 'Playing'};
 var $author$project$Messages$Resize = F2(
 	function (a, b) {
@@ -8693,7 +8694,7 @@ var $author$project$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{status: $author$project$Model$Playing}),
+						{bgmon: true, status: $author$project$Model$Playing}),
 					$elm$core$Platform$Cmd$none);
 			case 'Reset':
 				var p2 = model.player2;
@@ -8702,6 +8703,7 @@ var $author$project$Update$update = F2(
 					_Utils_update(
 						model,
 						{
+							bgmon: false,
 							player1: _Utils_update(
 								p1,
 								{ball: $author$project$Model$ballInit, bat: $author$project$Model$batInit, bricks: $author$project$Model$brickListInit, direction: 0, lose: false, moveLeft: false, moveRight: false, score: 0}),
@@ -8853,6 +8855,41 @@ var $author$project$Update$update = F2(
 		}
 	});
 var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
+	function (a, b, c) {
+		return {$: 'Node', a: a, b: b, c: c};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
+var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
+var $rtfeldman$elm_css$Html$Styled$audio = $rtfeldman$elm_css$Html$Styled$node('audio');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
+	function (a, b, c) {
+		return {$: 'Attribute', a: a, b: b, c: c};
+	});
+var $elm$virtual_dom$VirtualDom$property = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_property,
+			_VirtualDom_noInnerHtmlOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$property, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$autoplay = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('autoplay');
 var $author$project$Messages$Changeidentity = function (a) {
 	return {$: 'Changeidentity', a: a};
 };
@@ -8862,18 +8899,8 @@ var $author$project$Messages$PreviousTeacher1 = {$: 'PreviousTeacher1'};
 var $author$project$Messages$PreviousTeacher2 = {$: 'PreviousTeacher2'};
 var $author$project$Messages$Reset = {$: 'Reset'};
 var $author$project$Messages$Start = {$: 'Start'};
-var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
-	function (a, b, c) {
-		return {$: 'Node', a: a, b: b, c: c};
-	});
-var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
-var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
 var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
 var $elm$core$String$fromFloat = _String_fromNumber;
-var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
-	function (a, b, c) {
-		return {$: 'Attribute', a: a, b: b, c: c};
-	});
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -9077,21 +9104,6 @@ var $author$project$View$playerDemonstrate = function (model) {
 					$author$project$View$bricks(model.bricks)))
 			]));
 };
-var $elm$virtual_dom$VirtualDom$property = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_property,
-			_VirtualDom_noInnerHtmlOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
-	function (key, value) {
-		return A3(
-			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
-			A2($elm$virtual_dom$VirtualDom$property, key, value),
-			_List_Nil,
-			'');
-	});
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -11059,6 +11071,17 @@ var $elm$core$Basics$min = F2(
 var $author$project$View$view = function (model) {
 	var configwidth = 1000;
 	var configheight = 1000;
+	var audioornot = model.bgmon ? _List_fromArray(
+		[
+			A2(
+			$rtfeldman$elm_css$Html$Styled$audio,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$src('./audio/bgm.mp3'),
+					$rtfeldman$elm_css$Html$Styled$Attributes$autoplay(true)
+				]),
+			_List_Nil)
+		]) : _List_Nil;
 	var _v0 = model.size;
 	var w = _v0.a;
 	var h = _v0.b;
@@ -11108,7 +11131,8 @@ var $author$project$View$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$View$canvas(model)
-					]))
+					])),
+				A2($rtfeldman$elm_css$Html$Styled$div, _List_Nil, audioornot)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

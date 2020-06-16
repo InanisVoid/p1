@@ -1,4 +1,4 @@
-module Update exposing (update)
+module Update exposing (update, skillReset)
 import Messages exposing (Msg(..))
 import Model exposing (Model, Ball, Brick, Bat, Player, canvasHeight, canvasWidth,recInit, recCollisionTest,ballRecUpdate,batRecUpdate,brickConfig,generateBricks,brickRecUpdate,init)
 import Heros exposing (getPreviousTeacher,getNextTeacher,getFirstTeacher,Teacher)
@@ -9,22 +9,24 @@ import Model exposing (Status(..))
 import Random
 import Model exposing (ballInit,brickListInit)
 import Model exposing (batInit)
+import Heros exposing (Skills(..))
+import Model exposing (ballConfig)
 --import View exposing (init)
 -- import View exposing (initPlayer)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ({model | status=Playing},Cmd.none)
+           ({model | status=Playing,bgmon=True},Cmd.none)
         
         Reset ->
             let
                 p1=model.player1
                 p2=model.player2
             in
-                ({model | player1={p1|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0}
-                        , player2={p2|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0}
-                        , status=NotStarted},Cmd.none)
+                ({model | player1={p1|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0,audio = [],bonusSkill=False,chances=(1*2)}
+                        , player2={p2|ball=ballInit,bat=batInit,bricks=brickListInit,moveRight=False,moveLeft=False,lose=False,score=0,direction=0,audio = [],bonusSkill=False,chances=(1*2)}
+                        , status=NotStarted,bgmon=False},Cmd.none)
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
@@ -76,6 +78,25 @@ update msg model =
                 ( {model| player2=checkDirection p}
                 , Cmd.none
                 )
+        
+        Player1Skill ->
+            let
+                -- d= Debug.log "BeforeME" (model.player1).chances
+                (p1,p2)  = usingSkills model.player1 model.player2
+                -- d2= Debug.log "AfterME" p1.chances
+                -- d =Debug.log "P1" "True"
+            in
+            
+                 ({model| player1=p1,player2=p2}, Cmd.none)
+
+        Player2Skill ->
+            let
+                (p2,p1)  = usingSkills model.player2 model.player1
+                -- d =Debug.log "P2" "True"
+            in
+                ({model| player1=p1,player2=p2}, Cmd.none)
+
+
         PreviousTeacher1 ->
             let     
                 pTemp = model.player1
@@ -169,9 +190,8 @@ animate  model =
                 (nPlayer2Temp2, nPlayer1Temp2) = updateBricks nPlayer1Temp1 <| updateBall <| updateBat  nPlayer2Temp1
                 newPlayer1 = checkLose nPlayer1Temp2
                 newPlayer2 = checkLose nPlayer2Temp2
-            in
+           in
                 ( {model| player1 = newPlayer1, player2 = newPlayer2}, Cmd.none)
-
 
 checkLose : Player -> Player
 checkLose model =
@@ -191,6 +211,9 @@ checkLose model =
         { model | lose = (checkball model.ball) || (checkbrick model.bricks) }
 
 
+
+
+--Playground
 -- Bat
 updateBat : Player -> Player
 updateBat  model=
@@ -277,16 +300,23 @@ batCollision bat ball=
                             0
                         else
                             (bat.xSpeed + 1)/2
+
+                modifiedChangeByBat = 
+                    if ((Tuple.first speed) + changeByBat > 1) then
+                        1
+                    else if ((Tuple.first speed) + changeByBat < -1) then
+                        -1
+                    else (Tuple.first speed) + changeByBat
                 
                 -- d2=Debug.log "batChangeSpeed" changeByBat
             in 
             
             case recCollisionTest rec1 rec2 of
                 Model.Horizon -> 
-                    (((Tuple.first speed) + changeByBat) ,-(Tuple.second speed))
+                    ((modifiedChangeByBat) ,-(Tuple.second speed))
 
                 Model.Vertical ->
-                    (((Tuple.first speed) + changeByBat),-(Tuple.second speed))
+                    ((modifiedChangeByBat),-(Tuple.second speed))
                 
                 Model.Nocollision ->speed
             
@@ -318,6 +348,13 @@ updateBricks otherPlayer me =
         newball = changeSpeed flag me.ball
         newBricks = generateNewBricks (flag /= Model.Nocollision) me.ball me.bricks
         
+        getBonusSkill =
+            if me.bonusSkill && flag == Model.Nocollision then 
+                True
+            else 
+                False
+
+
         getNewOtherPlayer =
             if ((flag /= Model.Nocollision) && not (clearLines newBricks filteredY)) then
                 addOneLineBricks otherPlayer
@@ -329,10 +366,30 @@ updateBricks otherPlayer me =
                 clearLineBonus filteredY
             else
                 0
+
+        newaudio = 
+            if (flag /= Model.Nocollision) then 
+                List.append me.audio ["./audio/success.mp3"]
+            else
+                me.audio 
         
         teacher= getFirstTeacher me.teachers
+        getScore =
+            if not me.bonusSkill then
+                toFloat(round (me.score + (brickScore + getClearLineBonus)*teacher.score))
+            else
+                -- let
+                --     d=Debug.log "getScore" "True"
+                -- in
+                    (me.score + ((brickScore + getClearLineBonus)*5))
+        
+        getMe = 
+            if not me.bonusSkill then
+                 {me| ball= newball, bricks=newBricks,score = getScore,audio = newaudio}
+            else
+                 {me| ball= newball, bricks=newBricks,score = getScore,bonusSkill=getBonusSkill,audio = newaudio}
     in
-        ({me| ball= newball, bricks=newBricks,score = toFloat (round (me.score + (brickScore + getClearLineBonus)*teacher.score)) }, getNewOtherPlayer )
+        (getMe, getNewOtherPlayer )
 
 oneBricksCollision : Ball -> Brick -> (Brick,Model.Collisiontype) 
 oneBricksCollision ball onebrick =
@@ -425,6 +482,73 @@ addNewBricks model =
         generateBricks model number brickConfig.x brickConfig.y seedBrick.seed
 
 
+--HeroSkills
+
+usingSkills : Player ->Player -> (Player,Player)
+usingSkills me other = 
+    let
+        
+        myHero=getFirstTeacher me.teachers
+        
+        (newPlayer1,newPlayer2) = updateSkill myHero me other  
+
+    in 
+    --    if me.skill then
+    --         (me,other)
+    --    else
+        ({newPlayer1|chances=(newPlayer1.chances-1)} ,newPlayer2)
+
+
+updateSkill : Teacher -> Player-> Player -> (Player,Player)
+updateSkill hero me other =
+    let
+        skillAvailable =
+            case hero.skill of 
+                Bomb ->
+                    skillBomb me other
+                Bonus -> 
+                    (skillBonus me, other)
+                ResetBall ->
+                    (skillReset me, other)
+                Addline ->
+                    (me,addOneLineBricks other)
+    in
+        if me.chances > 0 then
+            skillAvailable
+        else 
+            (me,other)
+
+skillBonus : Player -> Player
+skillBonus model =
+    {model | bonusSkill = True} 
+
+
+skillBomb : Player -> Player -> (Player,Player)
+skillBomb me other =
+    let 
+        ballOriginal = me.ball
+        ballTemp = {ballOriginal| r=ballOriginal.r*5}
+        ballRec = ballRecUpdate ballTemp
+        meTemp = {me| ball = ballRec}
+        -- d2 = Debug.log "Before" meTemp.score
+        (newMe,newOther)=updateBricks other meTemp
+        -- d1 = Debug.log "AfterBomb" newMe.score
+    in
+        ({newMe| ball=ballOriginal},newOther)
+
+skillReset : Player -> Player
+skillReset model =
+    let
+        batTemp = model.bat
+        ballOriginal=model.ball
+        ballTemp ={ballOriginal|x=(batTemp.x+batConfig.width/2),y=(batTemp.y - 2*ballConfig.r)}
+    in 
+        {model| ball=ballRecUpdate ballTemp}
+
+ 
+
+
+--Score
 clearBrickScore : Float -> Float -> Float
 clearBrickScore  model scorenow =
     -- let

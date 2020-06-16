@@ -59,12 +59,17 @@ key on keycode =
 
         39 ->
             MoveRight2 on
+        
+        40 ->
+            Player2Skill
             
         65 ->
             MoveLeft1 on
           
         68 ->
             MoveRight1 on
-            
+
+        83 ->
+            Player1Skill
         _ ->
             Noop
